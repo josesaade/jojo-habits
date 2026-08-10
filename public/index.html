@@ -1,1 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08080c">
+<title>JoJo Habits</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #08080c;
+  --s1:      #0f0f16;
+  --s2:      #16161f;
+  --border:  #2a2a3a;
+  --gold:    #c8a84b;
+  --gold-l:  #e8c97a;
+  --purple:  #7c5cbf;
+  --purple-l:#a07de0;
+  --teal-l:  #5cc4b2;
+  --text:    #ede8e0;
+  --text-2:  #8a8578;
+  --text-3:  #42403a;
+  --r:       14px;
+  --r-sm:    8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:40px;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%,rgba(124,92,191,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 80%,rgba(200,168,75,.06) 0%,transparent 60%);
+  pointer-events:none;
+}
 
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(8,8,12,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--purple),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.brand-name{
+  font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.1em;
+  background:linear-gradient(90deg,var(--gold-l),var(--purple-l));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.header-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--text-2);text-align:right;line-height:1.7;
+}
+
+/* MAIN */
+main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1;}
+
+/* TODAY BADGE */
+.today-badge{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 18px;
+  margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.today-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);}
+.today-val{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);
+}
+.today-chips{display:flex;gap:6px;}
+.chip{
+  font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;
+}
+.chip.ok{background:rgba(92,196,178,.15);color:var(--teal-l);}
+.chip.no{background:rgba(66,64,58,.3);color:var(--text-3);}
+
+/* CARDS */
+.card{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px 20px;margin-bottom:14px;
+}
+.card-title{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  letter-spacing:.08em;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title .icon{font-size:18px;}
+
+/* INPUT ROW */
+.input-row{display:flex;gap:10px;align-items:center;}
+.num-input{
+  flex:1;background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;
+  padding:12px 16px;outline:none;text-align:center;
+  transition:border-color .15s;-webkit-appearance:none;
+}
+.num-input:focus{border-color:var(--gold);}
+.unit{font-size:11px;color:var(--text-2);font-weight:500;margin-left:4px;}
+
+/* STEPPER */
+.stepper{
+  display:flex;align-items:center;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);overflow:hidden;flex:1;
+}
+.step-btn{
+  background:none;border:none;color:var(--gold);
+  font-size:22px;padding:10px 20px;cursor:pointer;
+  transition:background .15s;font-weight:700;
+}
+.step-btn:hover{background:rgba(200,168,75,.1);}
+.step-val{
+  flex:1;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;
+  color:var(--gold-l);
+}
+
+/* QUICK BTNS */
+.quick-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.quick-btn{
+  flex:1;min-width:48px;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:6px;color:var(--text-2);
+  font-size:11px;font-weight:500;padding:7px 4px;
+  cursor:pointer;transition:border-color .15s,color .15s;
+  font-family:'Inter',sans-serif;
+}
+.quick-btn:hover{border-color:var(--gold);color:var(--gold-l);}
+
+/* BIG TOGGLE */
+.big-toggle{
+  width:100%;padding:16px;
+  background:var(--s2);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+  color:var(--text-2);cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.big-toggle.on{
+  background:rgba(92,196,178,.12);
+  border-color:var(--teal-l);color:var(--teal-l);
+}
+
+/* SAVE BTN */
+.save-btn{
+  width:100%;margin-top:10px;padding:13px;
+  background:linear-gradient(135deg,var(--purple),var(--gold));
+  color:#08080c;border:none;border-radius:var(--r-sm);
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;
+  cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.save-btn:hover{opacity:.9;}
+.save-btn:active{transform:scale(.98);}
+.save-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* PROGRESS BAR */
+.prog-wrap{margin-top:12px;}
+.prog-label{font-size:10px;color:var(--text-2);margin-bottom:5px;display:flex;justify-content:space-between;}
+.prog-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 20px;
+  font-size:13px;font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;z-index:999;white-space:nowrap;
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <div class="brand-name">JoJo Habits</div>
+  </div>
+  <div class="header-date" id="hdr-date">—</div>
+</header>
+
+<main>
+
+  <!-- Today summary -->
+  <div class="today-badge">
+    <div>
+      <div class="today-label">Hoy</div>
+      <div class="today-val" id="today-date">—</div>
+    </div>
+    <div class="today-chips" id="today-chips">
+      <span class="chip no">🌙</span>
+      <span class="chip no">⚡</span>
+      <span class="chip no">💧</span>
+    </div>
+  </div>
+
+  <!-- SUEÑO -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🌙</span> Sueño</div>
+    <div class="input-row">
+      <input class="num-input" type="number" id="sleep-val" min="0" max="24" step="0.5" placeholder="0" />
+      <span class="unit">horas</span>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Meta: 8h</span>
+        <span id="sleep-pct">0%</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="sleep-bar" style="width:0%;background:var(--purple-l);"></div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="save('sleep')">Guardar sueño</button>
+  </div>
+
+  <!-- ENTRENAMIENTO -->
+  <div class="card">
+    <div class="card-title"><span class="icon">⚡</span> Entrenamiento</div>
+    <button class="big-toggle" id="train-toggle" onclick="toggleTrain()">
+      <span id="train-icon">○</span>
+      <span id="train-label">No entrené hoy</span>
+    </button>
+    <button class="save-btn" onclick="save('train')" style="margin-top:14px;">Guardar entrenamiento</button>
+  </div>
+
+  <!-- AGUA -->
+  <div class="card">
+    <div class="card-title"><span class="icon">💧</span> Agua</div>
+    <div class="input-row">
+      <div class="stepper">
+        <button class="step-btn" onclick="changeWater(-250)">−</button>
+        <div class="step-val"><span id="water-val">0</span></div>
+        <button class="step-btn" onclick="changeWater(250)">+</button>
+      </div>
+      <span class="unit">ml</span>
+    </div>
+    <div class="quick-row">
+      <button class="quick-btn" onclick="setWater(500)">500ml</button>
+      <button class="quick-btn" onclick="setWater(1000)">1L</button>
+      <button class="quick-btn" onclick="setWater(1500)">1.5L</button>
+      <button class="quick-btn" onclick="setWater(2000)">2L</button>
+      <button class="quick-btn" onclick="setWater(2500)">2.5L</button>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Meta: 2500ml</span>
+        <span id="water-pct">0%</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="water-bar" style="width:0%;background:var(--teal-l);"></div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="save('water')">Guardar agua</button>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const URL_BASE = 'https://zfilewmutwyoomitgnsp.supabase.co/rest/v1';
+const KEY = 'sb_publishable_fJ94dsmRK_qloX4KzkqCXw_J1oIXFka';
+const HEADERS = {
+  'apikey': KEY,
+  'Authorization': 'Bearer ' + KEY,
+  'Content-Type': 'application/json',
+};
+
+const META_SLEEP = 8;
+const META_WATER = 2500;
+
+let waterVal = 0;
+let trainDone = false;
+let todayRecord = null;
+
+const today = new Date().toISOString().slice(0, 10);
+
+// ── INIT
+async function init() {
+  // Header date
+  const now = new Date();
+  document.getElementById('hdr-date').innerHTML =
+    now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).toUpperCase() +
+    '<br>' + now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('today-date').textContent =
+    now.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+
+  // Load today
+  try {
+    const res = await fetch(`${URL_BASE}/habits?fecha=eq.${today}&select=*`, {headers: HEADERS});
+    const data = await res.json();
+    if (data.length) {
+      todayRecord = data[0];
+      prefillForm(todayRecord);
+    }
+  } catch(e) { console.error(e); }
+}
+
+function prefillForm(r) {
+  if (r.sueño_horas) {
+    document.getElementById('sleep-val').value = r.sueño_horas;
+    updateSleepBar(r.sueño_horas);
+  }
+  if (r.entrenamiento) {
+    trainDone = true;
+    document.getElementById('train-toggle').classList.add('on');
+    document.getElementById('train-icon').textContent = '✓';
+    document.getElementById('train-label').textContent = 'Entrené hoy';
+  }
+  if (r.agua_ml) {
+    waterVal = r.agua_ml;
+    document.getElementById('water-val').textContent = waterVal;
+    updateWaterBar(waterVal);
+  }
+  updateChips(r);
+}
+
+function updateChips(r) {
+  const chips = document.getElementById('today-chips');
+  chips.innerHTML = `
+    <span class="chip ${r?.sueño_horas ? 'ok' : 'no'}">🌙</span>
+    <span class="chip ${r?.entrenamiento ? 'ok' : 'no'}">⚡</span>
+    <span class="chip ${r?.agua_ml >= META_WATER ? 'ok' : 'no'}">💧</span>
+  `;
+}
+
+// ── WATER
+function changeWater(d) {
+  waterVal = Math.max(0, Math.min(5000, waterVal + d));
+  document.getElementById('water-val').textContent = waterVal;
+  updateWaterBar(waterVal);
+}
+function setWater(v) {
+  waterVal = v;
+  document.getElementById('water-val').textContent = v;
+  updateWaterBar(v);
+}
+function updateWaterBar(v) {
+  const pct = Math.min(100, Math.round(v / META_WATER * 100));
+  document.getElementById('water-bar').style.width = pct + '%';
+  document.getElementById('water-pct').textContent = pct + '%';
+}
+
+// ── SLEEP BAR
+document.getElementById('sleep-val').addEventListener('input', function() {
+  updateSleepBar(parseFloat(this.value) || 0);
+});
+function updateSleepBar(v) {
+  const pct = Math.min(100, Math.round(v / META_SLEEP * 100));
+  document.getElementById('sleep-bar').style.width = pct + '%';
+  document.getElementById('sleep-pct').textContent = pct + '%';
+}
+
+// ── TRAIN TOGGLE
+function toggleTrain() {
+  trainDone = !trainDone;
+  const btn = document.getElementById('train-toggle');
+  btn.classList.toggle('on', trainDone);
+  document.getElementById('train-icon').textContent = trainDone ? '✓' : '○';
+  document.getElementById('train-label').textContent = trainDone ? 'Entrené hoy' : 'No entrené hoy';
+}
+
+// ── SAVE
+async function save(type) {
+  const btns = document.querySelectorAll('.save-btn');
+  btns.forEach(b => b.disabled = true);
+
+  let payload = { fecha: today };
+  if (type === 'sleep') payload.sueño_horas = parseFloat(document.getElementById('sleep-val').value) || 0;
+  if (type === 'train') payload.entrenamiento = trainDone;
+  if (type === 'water') payload.agua_ml = waterVal;
+
+  try {
+    if (todayRecord) {
+      await fetch(`${URL_BASE}/habits?id=eq.${todayRecord.id}`, {
+        method: 'PATCH',
+        headers: { ...HEADERS, 'Prefer': 'return=representation' },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      const res = await fetch(`${URL_BASE}/habits`, {
+        method: 'POST',
+        headers: { ...HEADERS, 'Prefer': 'return=representation' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data[0]) todayRecord = data[0];
+    }
+    updateChips({
+      sueño_horas: parseFloat(document.getElementById('sleep-val').value) || todayRecord?.sueño_horas,
+      entrenamiento: trainDone,
+      agua_ml: waterVal,
+    });
+    showToast(type === 'sleep' ? '🌙 Sueño guardado' : type === 'train' ? '⚡ Entrenamiento guardado' : '💧 Agua guardada');
+  } catch(e) {
+    showToast('Error al guardar');
+  } finally {
+    btns.forEach(b => b.disabled = false);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>
