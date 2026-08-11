@@ -40,8 +40,6 @@ body::before{
     radial-gradient(ellipse 50% 30% at 80% 80%,rgba(200,168,75,.06) 0%,transparent 60%);
   pointer-events:none;
 }
-
-/* HEADER */
 header{
   position:sticky;top:0;z-index:50;
   background:rgba(8,8,12,.9);
@@ -65,11 +63,7 @@ header{
   font-family:'JetBrains Mono',monospace;
   font-size:10px;color:var(--text-2);text-align:right;line-height:1.7;
 }
-
-/* MAIN */
 main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1;}
-
-/* TODAY BADGE */
 .today-badge{
   background:var(--s1);border:1px solid var(--border);
   border-radius:var(--r);padding:14px 18px;
@@ -77,17 +71,11 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   display:flex;align-items:center;justify-content:space-between;
 }
 .today-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);}
-.today-val{
-  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);
-}
+.today-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);}
 .today-chips{display:flex;gap:6px;}
-.chip{
-  font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;
-}
+.chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;}
 .chip.ok{background:rgba(92,196,178,.15);color:var(--teal-l);}
 .chip.no{background:rgba(66,64,58,.3);color:var(--text-3);}
-
-/* CARDS */
 .card{
   background:var(--s1);border:1px solid var(--border);
   border-radius:var(--r);padding:22px 20px;margin-bottom:14px;
@@ -98,8 +86,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   display:flex;align-items:center;gap:8px;
 }
 .card-title .icon{font-size:18px;}
-
-/* INPUT ROW */
 .input-row{display:flex;gap:10px;align-items:center;}
 .num-input{
   flex:1;background:var(--s2);border:1px solid var(--border);
@@ -110,8 +96,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 }
 .num-input:focus{border-color:var(--gold);}
 .unit{font-size:11px;color:var(--text-2);font-weight:500;margin-left:4px;}
-
-/* STEPPER */
 .stepper{
   display:flex;align-items:center;
   background:var(--s2);border:1px solid var(--border);
@@ -128,8 +112,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;
   color:var(--gold-l);
 }
-
-/* QUICK BTNS */
 .quick-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .quick-btn{
   flex:1;min-width:48px;
@@ -140,8 +122,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   font-family:'Inter',sans-serif;
 }
 .quick-btn:hover{border-color:var(--gold);color:var(--gold-l);}
-
-/* BIG TOGGLE */
 .big-toggle{
   width:100%;padding:16px;
   background:var(--s2);border:1.5px solid var(--border);
@@ -155,8 +135,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   background:rgba(92,196,178,.12);
   border-color:var(--teal-l);color:var(--teal-l);
 }
-
-/* SAVE BTN */
 .save-btn{
   width:100%;margin-top:10px;padding:13px;
   background:linear-gradient(135deg,var(--purple),var(--gold));
@@ -167,14 +145,10 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 .save-btn:hover{opacity:.9;}
 .save-btn:active{transform:scale(.98);}
 .save-btn:disabled{opacity:.35;cursor:not-allowed;}
-
-/* PROGRESS BAR */
 .prog-wrap{margin-top:12px;}
 .prog-label{font-size:10px;color:var(--text-2);margin-bottom:5px;display:flex;justify-content:space-between;}
 .prog-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
-
-/* TOAST */
 .toast{
   position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
   background:var(--s2);border:1px solid var(--border);
@@ -199,7 +173,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 
 <main>
 
-  <!-- Today summary -->
   <div class="today-badge">
     <div>
       <div class="today-label">Hoy</div>
@@ -212,7 +185,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     </div>
   </div>
 
-  <!-- SUEÑO -->
   <div class="card">
     <div class="card-title"><span class="icon">🌙</span> Sueño</div>
     <div class="input-row">
@@ -231,7 +203,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     <button class="save-btn" onclick="save('sleep')">Guardar sueño</button>
   </div>
 
-  <!-- ENTRENAMIENTO -->
   <div class="card">
     <div class="card-title"><span class="icon">⚡</span> Entrenamiento</div>
     <button class="big-toggle" id="train-toggle" onclick="toggleTrain()">
@@ -241,7 +212,6 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     <button class="save-btn" onclick="save('train')" style="margin-top:14px;">Guardar entrenamiento</button>
   </div>
 
-  <!-- AGUA -->
   <div class="card">
     <div class="card-title"><span class="icon">💧</span> Agua</div>
     <div class="input-row">
@@ -291,19 +261,17 @@ let waterVal = 0;
 let trainDone = false;
 let todayRecord = null;
 
-const today = new Date().toISOString().slice(0, 10);
+// Fecha en zona horaria de Colombia (UTC-5)
+const today = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Bogota'});
 
-// ── INIT
 async function init() {
-  // Header date
   const now = new Date();
   document.getElementById('hdr-date').innerHTML =
-    now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).toUpperCase() +
-    '<br>' + now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',timeZone:'America/Bogota'}).toUpperCase() +
+    '<br>' + now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',timeZone:'America/Bogota'});
   document.getElementById('today-date').textContent =
-    now.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+    now.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
 
-  // Load today
   try {
     const res = await fetch(`${URL_BASE}/habits?fecha=eq.${today}&select=*`, {headers: HEADERS});
     const data = await res.json();
@@ -342,7 +310,6 @@ function updateChips(r) {
   `;
 }
 
-// ── WATER
 function changeWater(d) {
   waterVal = Math.max(0, Math.min(5000, waterVal + d));
   document.getElementById('water-val').textContent = waterVal;
@@ -359,7 +326,6 @@ function updateWaterBar(v) {
   document.getElementById('water-pct').textContent = pct + '%';
 }
 
-// ── SLEEP BAR
 document.getElementById('sleep-val').addEventListener('input', function() {
   updateSleepBar(parseFloat(this.value) || 0);
 });
@@ -369,7 +335,6 @@ function updateSleepBar(v) {
   document.getElementById('sleep-pct').textContent = pct + '%';
 }
 
-// ── TRAIN TOGGLE
 function toggleTrain() {
   trainDone = !trainDone;
   const btn = document.getElementById('train-toggle');
@@ -378,7 +343,6 @@ function toggleTrain() {
   document.getElementById('train-label').textContent = trainDone ? 'Entrené hoy' : 'No entrené hoy';
 }
 
-// ── SAVE
 async function save(type) {
   const btns = document.querySelectorAll('.save-btn');
   btns.forEach(b => b.disabled = true);
