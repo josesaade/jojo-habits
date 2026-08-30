@@ -238,6 +238,11 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     </div>
 
     <!-- Medidas antropométricas -->
+    <div class="card" id="medidas-actuales-card" style="display:none;">
+      <div class="card-title"><span class="icon">📏</span> Medidas actuales</div>
+      <div id="medidas-actuales-content"></div>
+    </div>
+
     <div class="card">
       <div class="card-title"><span class="icon">📏</span> Medidas antropométricas</div>
       <div class="card-subtitle">Circunferencias para cálculo de grasa (fórmula US Navy)</div>
@@ -400,6 +405,7 @@ function switchTab(name){
   document.getElementById('panel-'+name).classList.add('active');
   if(name==='analisis') loadAnalisisPanel();
   if(name==='historial') loadHistorialPanel();
+  if(name==='stats') loadStatsPanel();
 }
 
 async function init(){
@@ -600,6 +606,8 @@ async function loadAnalisisPanel(){
     const grasaPct=m.grasa_pct;
     const pesoGrasa=m.peso_grasa_kg;
     const pesoMagro=m.peso_magro_kg;
+    const cuello=m.cuello_cm;
+    const abdomen=m.abdomen_cm;
     
     const now=new Date();
     const fechaFormato=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
@@ -659,7 +667,23 @@ async function loadAnalisisPanel(){
     
     document.getElementById('analisis-content').innerHTML=`
       <div style="margin-bottom:24px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Composición Corporal</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Medidas Antropométricas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div class="comp-item">
+            <div class="comp-item-val">${cuello}</div>
+            <div class="comp-item-label">Cuello</div>
+            <div class="comp-item-sub">cm</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val">${abdomen}</div>
+            <div class="comp-item-label">Abdomen</div>
+            <div class="comp-item-sub">cm</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Composición Corporal (Fórmula US Navy)</div>
         <div class="comp-visual">
           <div class="comp-item">
             <div class="comp-item-val">${peso.toFixed(1)}</div>
@@ -772,6 +796,45 @@ function showToast(msg){
 }
 
 let currentMonth=new Date();
+async function loadStatsPanel(){
+  try{
+    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
+    const data=await res.json();
+    
+    if(data.length){
+      const m=data[0];
+      const html=`
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="comp-item">
+            <div class="comp-item-val">${m.cuello_cm}</div>
+            <div class="comp-item-label">Cuello</div>
+            <div class="comp-item-sub">cm</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val">${m.abdomen_cm}</div>
+            <div class="comp-item-label">Abdomen</div>
+            <div class="comp-item-sub">cm</div>
+          </div>
+          ${m.bicep_cm?`<div class="comp-item"><div class="comp-item-val">${m.bicep_cm}</div><div class="comp-item-label">Bícep</div><div class="comp-item-sub">cm</div></div>`:``}
+          ${m.muslo_cm?`<div class="comp-item"><div class="comp-item-val">${m.muslo_cm}</div><div class="comp-item-label">Muslo</div><div class="comp-item-sub">cm</div></div>`:``}
+          ${m.cadera_cm?`<div class="comp-item"><div class="comp-item-val">${m.cadera_cm}</div><div class="comp-item-label">Cadera</div><div class="comp-item-sub">cm</div></div>`:``}
+          <div class="comp-item">
+            <div class="comp-item-val" style="color:var(--red);">${m.grasa_pct.toFixed(1)}</div>
+            <div class="comp-item-label">Grasa</div>
+            <div class="comp-item-sub">%</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('medidas-actuales-content').innerHTML=html;
+      document.getElementById('medidas-actuales-card').style.display='block';
+    }else{
+      document.getElementById('medidas-actuales-card').style.display='none';
+    }
+  }catch(e){
+    console.error(e);
+  }
+}
+
 async function loadHistorialPanel(){
   loadCalendar();
 }
@@ -839,9 +902,14 @@ async function loadCalendar(){
 
 async function selectDay(dateStr){
   try{
-    const res=await fetch(`${URL_BASE}/habits?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
-    const data=await res.json();
-    const dayData=data[0]||{fecha:dateStr};
+    const resHabits=await fetch(`${URL_BASE}/habits?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
+    const habitsData=await resHabits.json();
+    const dayData=habitsData[0]||{fecha:dateStr};
+    
+    // Cargar medidas de ese día
+    const resMedidas=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
+    const medidasData=await resMedidas.json();
+    const medidas=medidasData[0];
     
     const fecha=new Date(dateStr).toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
     
@@ -867,6 +935,30 @@ async function selectDay(dateStr){
         <span class="day-detail-val">${dayData.calorias_quemadas||0}kcal</span>
       </div>
     `;
+    
+    if(medidas){
+      html+=`
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Medidas</div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Cuello</span>
+            <span class="day-detail-val">${medidas.cuello_cm}cm</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Abdomen</span>
+            <span class="day-detail-val">${medidas.abdomen_cm}cm</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Grasa corporal</span>
+            <span class="day-detail-val" style="color:var(--red);">${medidas.grasa_pct.toFixed(1)}%</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Peso magro</span>
+            <span class="day-detail-val" style="color:var(--green);">${medidas.peso_magro_kg.toFixed(1)}kg</span>
+          </div>
+        </div>
+      `;
+    }
     
     document.getElementById('day-detail-content').innerHTML=html;
     document.getElementById('day-detail-card').style.display='block';
@@ -919,13 +1011,17 @@ async function compareNuevoClick(){
   if(!date1||!date2){showToast('Ingresa ambas fechas');return;}
   
   try{
-    const [res1,res2]=await Promise.all([
+    const [res1,res2,resMed1,resMed2]=await Promise.all([
       fetch(`${URL_BASE}/habits?fecha=eq.${date1}&select=*`,{headers:HEADERS}),
-      fetch(`${URL_BASE}/habits?fecha=eq.${date2}&select=*`,{headers:HEADERS})
+      fetch(`${URL_BASE}/habits?fecha=eq.${date2}&select=*`,{headers:HEADERS}),
+      fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${date1}&select=*`,{headers:HEADERS}),
+      fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${date2}&select=*`,{headers:HEADERS})
     ]);
     
     const data1=await res1.json(),data2=await res2.json();
+    const med1Data=await resMed1.json(),med2Data=await resMed2.json();
     const d1=data1[0]||{},d2=data2[0]||{};
+    const m1=med1Data[0],m2=med2Data[0];
     
     const f1=new Date(date1).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
     const f2=new Date(date2).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
@@ -964,9 +1060,37 @@ async function compareNuevoClick(){
             <td>${d2.entrenamiento?'✓':'○'}</td>
             <td>${d1.entrenamiento===d2.entrenamiento?'-':d2.entrenamiento?'✓':'○'}</td>
           </tr>
-        </table>
-      </div>
     `;
+    
+    if(m1&&m2){
+      html+=`
+          <tr>
+            <td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Medidas Antropométricas</td>
+          </tr>
+          <tr>
+            <td>Cuello</td>
+            <td>${m1.cuello_cm}cm</td>
+            <td>${m2.cuello_cm}cm</td>
+            <td style="color:${m2.cuello_cm<m1.cuello_cm?'var(--green)':'var(--red)'}">${(m2.cuello_cm-m1.cuello_cm).toFixed(1)}cm</td>
+          </tr>
+          <tr>
+            <td>Abdomen</td>
+            <td>${m1.abdomen_cm}cm</td>
+            <td>${m2.abdomen_cm}cm</td>
+            <td style="color:${m2.abdomen_cm<m1.abdomen_cm?'var(--green)':'var(--red)'}">${(m2.abdomen_cm-m1.abdomen_cm).toFixed(1)}cm</td>
+          </tr>
+          <tr>
+            <td>Grasa corporal</td>
+            <td>${m1.grasa_pct.toFixed(1)}%</td>
+            <td>${m2.grasa_pct.toFixed(1)}%</td>
+            <td style="color:${m2.grasa_pct<m1.grasa_pct?'var(--green)':'var(--red)'}">${(m2.grasa_pct-m1.grasa_pct).toFixed(2)}%</td>
+          </tr>
+      `;
+    }else if(m1||m2){
+      html+=`<tr><td colspan="4" style="font-size:10px;color:var(--text-2);text-align:center;">Solo una fecha tiene medidas</td></tr>`;
+    }
+    
+    html+=`</table></div>`;
     
     document.getElementById('comparison-result').innerHTML=html;
     document.getElementById('comparison-result').style.display='block';
