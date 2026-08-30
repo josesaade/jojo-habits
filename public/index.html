@@ -16,9 +16,9 @@
   --text:#ede8e0;--text-2:#8a8578;--text-3:#42403a;--r:14px;--r-sm:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:40px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:40px;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(124,92,191,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 80%,rgba(200,168,75,.06) 0%,transparent 60%);pointer-events:none;}
-header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 20px 0;}
+header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:calc(16px + env(safe-area-inset-top)) 20px 0;}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--purple),var(--gold));display:flex;align-items:center;justify-content:center;font-size:16px;}
@@ -231,7 +231,7 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
         <div class="stat-box">
           <div class="stat-box-label">Peso ideal</div>
           <div class="stat-box-val green" id="ideal-val">—</div>
-          <div class="stat-box-sub">Fórmula Devine</div>
+          <div class="stat-box-sub">Rango saludable</div>
         </div>
       </div>
       <div class="detail-card" id="stats-detail">—</div>
@@ -241,6 +241,37 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     <div class="card" id="medidas-actuales-card" style="display:none;">
       <div class="card-title"><span class="icon">📏</span> Medidas actuales</div>
       <div id="medidas-actuales-content"></div>
+    </div>
+
+    <!-- Resultados de grasa corporal -->
+    <div id="grasa-results" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-box-label">Grasa corporal</div>
+            <div class="stat-box-val" id="grasa-val">—</div>
+            <div class="stat-box-sub" id="grasa-badge">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-label">Peso magro</div>
+            <div class="stat-box-val green" id="magro-val">—</div>
+            <div class="stat-box-sub" id="magro-badge">kg</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-box-label">Peso de grasa</div>
+            <div class="stat-box-val" id="peso-grasa-val">—</div>
+            <div class="stat-box-sub">kg</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-label">Diferencia ideal</div>
+            <div class="stat-box-val" id="diff-val">—</div>
+            <div class="stat-box-sub" id="diff-sub">—</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -277,40 +308,7 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
       
       <div id="historial-medidas" style="display:none;margin-top:16px;"></div>
     </div>
-
-    <!-- Resultados de grasa corporal -->
-    <div id="grasa-results" style="display:none;">
-      <div class="card">
-        <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-box-label">Grasa corporal</div>
-            <div class="stat-box-val" id="grasa-val">—</div>
-            <div class="stat-box-sub" id="grasa-badge">—</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-label">Peso magro</div>
-            <div class="stat-box-val green" id="magro-val">—</div>
-            <div class="stat-box-sub" id="magro-badge">kg</div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-box-label">Peso de grasa</div>
-            <div class="stat-box-val" id="peso-grasa-val">—</div>
-            <div class="stat-box-sub">kg</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-label">Diferencia ideal</div>
-            <div class="stat-box-val" id="diff-val">—</div>
-            <div class="stat-box-sub" id="diff-sub">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
-
-</main>
 
   <!-- ANÁLISIS -->
   <div class="panel" id="panel-analisis">
@@ -338,6 +336,15 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
         <button class="reset-btn" onclick="previousMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">← Anterior</button>
         <div style="flex:1;text-align:center;padding:8px;background:var(--s2);border-radius:var(--r-sm);font-family:'JetBrains Mono';font-size:11px;color:var(--text-2);" id="current-month">—</div>
         <button class="reset-btn" onclick="nextMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">Siguiente →</button>
+      </div>
+      <div class="calendar-grid" id="calendar-weekdays" style="margin-bottom:6px;">
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">D</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">L</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">M</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">M</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">J</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">V</div>
+        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">S</div>
       </div>
       <div class="calendar-grid" id="calendar-grid"></div>
     </div>
@@ -391,6 +398,8 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     <div id="comparison-result" style="display:none;"></div>
   </div>
 
+</main>
+
 <script>
 const URL_BASE='https://zfilewmutwyoomitgnsp.supabase.co/rest/v1';
 const KEY='sb_publishable_fJ94dsmRK_qloX4KzkqCXw_J1oIXFka';
@@ -415,7 +424,23 @@ async function init(){
   try{
     const res=await fetch(`${URL_BASE}/habits?fecha=eq.${today}&select=*`,{headers:HEADERS});
     const data=await res.json();
-    if(data.length){todayRecord=data[0];prefillForm(data[0]);}
+    if(data.length){
+      // Defensivo: si hay duplicados para hoy, fusionar tomando el mejor valor de cada campo
+      const merged=data.reduce((acc,r)=>({
+        id:r.id, // usamos el id más reciente para futuros PATCH
+        sueño_horas:Math.max(acc.sueño_horas||0,r.sueño_horas||0),
+        entrenamiento:acc.entrenamiento||r.entrenamiento||false,
+        agua_ml:Math.max(acc.agua_ml||0,r.agua_ml||0),
+        calorias_quemadas:Math.max(acc.calorias_quemadas||0,r.calorias_quemadas||0),
+        cuello_cm:acc.cuello_cm||r.cuello_cm,
+        abdomen_cm:acc.abdomen_cm||r.abdomen_cm,
+        bicep_cm:acc.bicep_cm||r.bicep_cm,
+        muslo_cm:acc.muslo_cm||r.muslo_cm,
+        cadera_cm:acc.cadera_cm||r.cadera_cm
+      }),{});
+      todayRecord=merged;
+      prefillForm(merged);
+    }
   }catch(e){console.error(e);}
 }
 
@@ -473,13 +498,13 @@ async function save(type){
   }
   if(type==='water') payload.agua_ml=waterVal;
   try{
-    if(todayRecord){
-      await fetch(`${URL_BASE}/habits?id=eq.${todayRecord.id}`,{method:'PATCH',headers:HEADERS,body:JSON.stringify(payload)});
-    }else{
-      const res=await fetch(`${URL_BASE}/habits`,{method:'POST',headers:{...HEADERS,'Prefer':'return=representation'},body:JSON.stringify(payload)});
-      const data=await res.json();
-      if(data[0])todayRecord=data[0];
-    }
+    const res=await fetch(`${URL_BASE}/habits?on_conflict=fecha`,{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},
+      body:JSON.stringify(payload)
+    });
+    const data=await res.json();
+    if(data[0])todayRecord=data[0];
     updateChips({sueño_horas:parseFloat(document.getElementById('sleep-val').value)||todayRecord?.sueño_horas,entrenamiento:trainDone,agua_ml:waterVal});
     showToast(type==='sleep'?'🌙 Sueño guardado':type==='train'?'⚡ Entrenamiento guardado':'💧 Agua guardada');
   }catch(e){showToast('Error al guardar');}
@@ -543,20 +568,21 @@ async function saveMedidas(){
   const payload={fecha:today,cuello_cm:cuello,abdomen_cm:abdomen,bicep_cm:bicep||null,muslo_cm:muslo||null,cadera_cm:cadera||null,grasa_pct:grasaPct,peso_grasa_kg:pesoGrasa,peso_magro_kg:pesoMagro};
   
   try{
-    // Guardar en medidas_antropometricas
-    const resCheck=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=id`,{headers:HEADERS});
-    const exists=await resCheck.json();
+    // Guardar en medidas_antropometricas (upsert por fecha)
+    await fetch(`${URL_BASE}/medidas_antropometricas?on_conflict=fecha`,{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify(payload)
+    });
     
-    if(exists.length){
-      await fetch(`${URL_BASE}/medidas_antropometricas?id=eq.${exists[0].id}`,{method:'PATCH',headers:HEADERS,body:JSON.stringify(payload)});
-    }else{
-      await fetch(`${URL_BASE}/medidas_antropometricas`,{method:'POST',headers:HEADERS,body:JSON.stringify(payload)});
-    }
-    
-    // Guardar también en habits
-    if(todayRecord){
-      await fetch(`${URL_BASE}/habits?id=eq.${todayRecord.id}`,{method:'PATCH',headers:HEADERS,body:JSON.stringify({cuello_cm:cuello,abdomen_cm:abdomen,bicep_cm:bicep||null,muslo_cm:muslo||null,cadera_cm:cadera||null})});
-    }
+    // Guardar también en habits (upsert por fecha)
+    const resHabits=await fetch(`${URL_BASE}/habits?on_conflict=fecha`,{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},
+      body:JSON.stringify({fecha:today,cuello_cm:cuello,abdomen_cm:abdomen,bicep_cm:bicep||null,muslo_cm:muslo||null,cadera_cm:cadera||null})
+    });
+    const habitsData=await resHabits.json();
+    if(habitsData[0])todayRecord=habitsData[0];
     
     // Mostrar resultados
     document.getElementById('grasa-results').style.display='block';
@@ -648,6 +674,14 @@ async function loadAnalisisPanel(){
     const musculoIdeal=pesoIdeal*0.20*5;
     const diffMusculo=pesoProteina-musculoIdeal;
     
+    // TMB (Mifflin-St Jeor, hombre) + calorías estimadas
+    const tmb=(10*peso)+(6.25*ALTURA_CM)-(5*EDAD)+5;
+    const calMantenimiento=tmb*1.375; // actividad ligera-moderada
+    const calDeficit=calMantenimiento-500;
+    const calSuperavit=calMantenimiento+300;
+    // Tiempo estimado para perder grasa sobrante (1kg grasa ≈ 7700 kcal, déficit 500/día)
+    const semanasParaMeta=diffGrasa>0?Math.ceil((diffGrasa*7700)/500/7):0;
+    
     // Recomendaciones
     let recHtml='';
     if(grasaPct>25){
@@ -666,9 +700,9 @@ async function loadAnalisisPanel(){
     }
     
     document.getElementById('analisis-content').innerHTML=`
-      <div style="margin-bottom:24px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Medidas Antropométricas</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="card">
+        <div class="card-title"><span class="icon">📏</span> Medidas antropométricas</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="comp-item">
             <div class="comp-item-val">${cuello}</div>
             <div class="comp-item-label">Cuello</div>
@@ -682,9 +716,10 @@ async function loadAnalisisPanel(){
         </div>
       </div>
 
-      <div style="margin-bottom:24px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Composición Corporal (Fórmula US Navy)</div>
-        <div class="comp-visual">
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
+        <div class="card-subtitle">Calculado con fórmula US Navy (cuello + abdomen)</div>
+        <div class="comp-visual" style="margin-bottom:0;">
           <div class="comp-item">
             <div class="comp-item-val">${peso.toFixed(1)}</div>
             <div class="comp-item-label">Peso total</div>
@@ -708,15 +743,39 @@ async function loadAnalisisPanel(){
         </div>
       </div>
 
-      <div class="body-type-box">
-        <div class="body-type-label">Clasificación</div>
-        <div class="body-type-val">${tipoNombre}</div>
-        <div class="body-type-desc">${tipoDesc}</div>
+      <div class="card">
+        <div class="body-type-box" style="margin-bottom:0;background:none;border:none;padding:0;">
+          <div class="body-type-label">Clasificación</div>
+          <div class="body-type-val">${tipoNombre}</div>
+          <div class="body-type-desc">${tipoDesc}</div>
+        </div>
       </div>
 
-      <div class="recommendations">
-        <div class="rec-title">📊 Metas personalizadas</div>
-        <div style="font-size:11px;color:var(--text-2);margin-bottom:16px;">Para alcanzar peso ideal</div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔥</span> Gasto calórico estimado</div>
+        <div class="card-subtitle">Fórmula Mifflin-St Jeor + actividad ligera-moderada</div>
+        <div class="comp-visual" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:0;">
+          <div class="comp-item">
+            <div class="comp-item-val" style="font-size:16px;">${tmb.toFixed(0)}</div>
+            <div class="comp-item-label">TMB</div>
+            <div class="comp-item-sub">kcal/día</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val" style="font-size:16px;color:var(--gold-l);">${calMantenimiento.toFixed(0)}</div>
+            <div class="comp-item-label">Mantener</div>
+            <div class="comp-item-sub">kcal/día</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val" style="font-size:16px;color:${diffGrasa>0?'var(--red)':'var(--green)'};">${diffGrasa>0?calDeficit.toFixed(0):calSuperavit.toFixed(0)}</div>
+            <div class="comp-item-label">${diffGrasa>0?'Déficit':'Superávit'}</div>
+            <div class="comp-item-sub">kcal/día</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Metas personalizadas</div>
+        <div class="card-subtitle">Para alcanzar peso ideal (${pesoIdeal.toFixed(1)}kg)</div>
         
         <div class="goal-progress">
           <div class="goal-label">
@@ -734,23 +793,25 @@ async function loadAnalisisPanel(){
             <span>${(diffGrasa>0?'+':'')+diffGrasa.toFixed(1)} kg</span>
           </div>
           <div class="goal-bar">
-            <div class="goal-fill negative" style="width:${Math.min(100,Math.abs(diffGrasa)*5)};"></div>
+            <div class="goal-fill negative" style="width:${Math.min(100,Math.abs(diffGrasa)*5)}%;"></div>
           </div>
         </div>
 
-        <div class="goal-progress">
+        <div class="goal-progress" style="margin-bottom:0;">
           <div class="goal-label">
             <span>Músculo a ganar</span>
             <span>${(diffMusculo>0?'+':'')+diffMusculo.toFixed(2)} kg</span>
           </div>
           <div class="goal-bar">
-            <div class="goal-fill positive" style="width:${Math.min(100,Math.abs(diffMusculo)*5)};"></div>
+            <div class="goal-fill positive" style="width:${Math.min(100,Math.abs(diffMusculo)*5)}%;"></div>
           </div>
         </div>
+
+        ${semanasParaMeta>0?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--text-2);">⏱️ A un déficit de 500 kcal/día, llegarías a tu grasa ideal en aprox. <strong style="color:var(--text)">${semanasParaMeta} semanas</strong></div>`:''}
       </div>
 
-      <div class="recommendations">
-        <div class="rec-title">💡 Recomendaciones</div>
+      <div class="card">
+        <div class="card-title"><span class="icon">💡</span> Recomendaciones</div>
         ${recHtml}
       </div>
     `;
@@ -865,10 +926,24 @@ async function loadCalendar(){
   const monthEnd=new Date(year,month+1,0).toLocaleDateString('en-CA');
   
   try{
-    const res=await fetch(`${URL_BASE}/habits?fecha=gte.${monthStart}&fecha=lte.${monthEnd}&select=fecha,sueño_horas,entrenamiento,agua_ml,calorias_quemadas`,{headers:HEADERS});
+    const res=await fetch(`${URL_BASE}/habits?fecha=gte.${monthStart}&fecha=lte.${monthEnd}&select=*`,{headers:HEADERS});
     const data=await res.json();
     const dataByDate={};
-    data.forEach(d=>dataByDate[d.fecha]=d);
+    data.forEach(d=>{
+      if(!dataByDate[d.fecha]){
+        dataByDate[d.fecha]=d;
+      }else{
+        // Fusionar si hay duplicados para la misma fecha
+        const acc=dataByDate[d.fecha];
+        dataByDate[d.fecha]={
+          fecha:d.fecha,
+          sueño_horas:Math.max(acc.sueño_horas||0,d.sueño_horas||0),
+          entrenamiento:acc.entrenamiento||d.entrenamiento||false,
+          agua_ml:Math.max(acc.agua_ml||0,d.agua_ml||0),
+          calorias_quemadas:Math.max(acc.calorias_quemadas||0,d.calorias_quemadas||0)
+        };
+      }
+    });
     
     let html='';
     // Días vacíos antes del primer día
@@ -904,7 +979,17 @@ async function selectDay(dateStr){
   try{
     const resHabits=await fetch(`${URL_BASE}/habits?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
     const habitsData=await resHabits.json();
-    const dayData=habitsData[0]||{fecha:dateStr};
+    // Defensivo: si hay múltiples filas para la misma fecha (duplicados), fusionar tomando el mejor valor de cada campo
+    let dayData={fecha:dateStr};
+    if(habitsData.length){
+      dayData=habitsData.reduce((acc,r)=>({
+        fecha:dateStr,
+        sueño_horas:Math.max(acc.sueño_horas||0,r.sueño_horas||0),
+        entrenamiento:acc.entrenamiento||r.entrenamiento||false,
+        agua_ml:Math.max(acc.agua_ml||0,r.agua_ml||0),
+        calorias_quemadas:Math.max(acc.calorias_quemadas||0,r.calorias_quemadas||0)
+      }),{});
+    }
     
     // Cargar medidas de ese día
     const resMedidas=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
@@ -986,14 +1071,11 @@ async function updateDayData(){
   };
   
   try{
-    const res=await fetch(`${URL_BASE}/habits?fecha=eq.${fecha}&select=id`,{headers:HEADERS});
-    const exists=await res.json();
-    
-    if(exists.length){
-      await fetch(`${URL_BASE}/habits?id=eq.${exists[0].id}`,{method:'PATCH',headers:HEADERS,body:JSON.stringify(payload)});
-    }else{
-      await fetch(`${URL_BASE}/habits`,{method:'POST',headers:HEADERS,body:JSON.stringify(payload)});
-    }
+    await fetch(`${URL_BASE}/habits?on_conflict=fecha`,{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify(payload)
+    });
     
     showToast('✓ Día actualizado');
     loadCalendar();
