@@ -107,6 +107,29 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 .goal-fill.negative{background:var(--red);}
 .goal-fill.positive{background:var(--green);}
 .close-modal-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;margin-top:12px;}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
+.calendar-day{aspect-ratio:1;background:var(--s2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;font-family:'JetBrains Mono';font-weight:600;transition:all .15s;position:relative;}
+.calendar-day:hover{border-color:var(--gold);background:rgba(200,168,75,.1);}
+.calendar-day.ok{border-color:var(--green);background:rgba(77,184,117,.2);color:var(--green);}
+.calendar-day.partial{border-color:var(--gold-l);background:rgba(232,201,122,.15);color:var(--gold-l);}
+.calendar-day.empty{border-color:var(--border);background:var(--s2);color:var(--text-3);}
+.calendar-day.selected{border-color:var(--purple-l);background:rgba(160,125,224,.25);box-shadow:0 0 10px rgba(160,125,224,.3);}
+.day-detail{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.day-detail-fecha{font-family:'Cinzel',serif;font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.day-detail-stat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.day-detail-stat:last-child{border-bottom:none;}
+.day-detail-label{color:var(--text-2);}
+.day-detail-val{font-family:'JetBrains Mono';font-weight:600;color:var(--text);}
+.comparison-table{width:100%;border-collapse:collapse;font-size:11px;}
+.comparison-table th{background:var(--s2);color:var(--text-2);padding:10px;text-align:left;border:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.comparison-table td{padding:10px;border:1px solid var(--border);}
+.comparison-table tr:nth-child(even){background:rgba(22,22,31,.5);}
+.comparison-table tr:hover{background:rgba(124,92,191,.1);}
+.config-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+.config-title{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;}
+.config-date-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:10px;font-size:12px;margin-bottom:8px;}
+.config-btn{width:100%;padding:10px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-weight:600;cursor:pointer;font-size:12px;margin-bottom:8px;}
+.config-btn:hover{opacity:.9;}
 </style>
 </head>
 <body>
@@ -121,6 +144,8 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   <div class="tabs">
     <button class="tab active" onclick="switchTab('habits')">Hábitos</button>
     <button class="tab" onclick="switchTab('stats')">Stats</button>
+    <button class="tab" onclick="switchTab('analisis')">Análisis</button>
+    <button class="tab" onclick="switchTab('historial')">📅</button>
   </div>
 </header>
 
@@ -159,6 +184,10 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
         <span id="train-icon">○</span>
         <span id="train-label">No entrené hoy</span>
       </button>
+      <div class="input-row" style="margin-top:14px;">
+        <input class="num-input" type="number" id="calorias-quemadas" min="0" max="2000" step="50" placeholder="0" />
+        <span class="unit">kcal quemadas</span>
+      </div>
       <button class="save-btn" onclick="save('train')" style="margin-top:14px;">Guardar entrenamiento</button>
     </div>
 
@@ -278,97 +307,84 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 
 </main>
 
-<div class="modal-overlay" id="modal-analisis">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;">Análisis Corporal</div>
-      <button class="modal-close" onclick="closeAnalisisModal()">✕</button>
-    </div>
-
-    <!-- Fecha -->
-    <div style="text-align:center;font-size:11px;color:var(--text-2);margin-bottom:20px;font-family:'JetBrains Mono';" id="modal-fecha">—</div>
-
-    <!-- Composición Corporal -->
-    <div style="margin-bottom:24px;">
-      <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Composición Corporal</div>
-      <div class="comp-visual">
-        <div class="comp-item">
-          <div class="comp-item-val" id="comp-peso">—</div>
-          <div class="comp-item-label">Peso total</div>
-          <div class="comp-item-sub">kg</div>
-        </div>
-        <div class="comp-item">
-          <div class="comp-item-val" id="comp-agua" style="color:var(--teal-l);">—</div>
-          <div class="comp-item-label">Agua</div>
-          <div class="comp-item-sub" id="comp-agua-pct">—%</div>
-        </div>
-        <div class="comp-item">
-          <div class="comp-item-val" id="comp-grasa" style="color:var(--red);">—</div>
-          <div class="comp-item-label">Grasa</div>
-          <div class="comp-item-sub" id="comp-grasa-pct">—%</div>
-        </div>
-        <div class="comp-item">
-          <div class="comp-item-val" id="comp-musculo" style="color:var(--gold-l);">—</div>
-          <div class="comp-item-label">Músculo</div>
-          <div class="comp-item-sub" id="comp-musculo-pct">—%</div>
-        </div>
+  <!-- ANÁLISIS -->
+  <div class="panel" id="panel-analisis">
+    <div class="today-badge">
+      <div>
+        <div class="today-label">Análisis de hoy</div>
+        <div class="today-val" id="analisis-date">—</div>
       </div>
     </div>
 
-    <!-- Tipo de Cuerpo -->
-    <div class="body-type-box">
-      <div class="body-type-label">Clasificación</div>
-      <div class="body-type-val" id="body-type-name">—</div>
-      <div class="body-type-desc" id="body-type-desc">—</div>
-    </div>
-
-    <!-- Metas -->
-    <div class="recommendations">
-      <div class="rec-title">📊 Metas personalizadas</div>
-      <div style="font-size:11px;color:var(--text-2);margin-bottom:16px;">Para alcanzar peso ideal</div>
-      
-      <div class="goal-progress">
-        <div class="goal-label">
-          <span>Peso total</span>
-          <span id="goal-peso-diff">—</span>
-        </div>
-        <div class="goal-bar">
-          <div class="goal-fill" id="goal-peso-bar" style="width:0%;"></div>
-        </div>
-      </div>
-
-      <div class="goal-progress">
-        <div class="goal-label">
-          <span>Grasa a perder</span>
-          <span id="goal-grasa">—</span>
-        </div>
-        <div class="goal-bar">
-          <div class="goal-fill negative" id="goal-grasa-bar" style="width:0%;"></div>
-        </div>
-      </div>
-
-      <div class="goal-progress">
-        <div class="goal-label">
-          <span>Músculo a ganar</span>
-          <span id="goal-musculo">—</span>
-        </div>
-        <div class="goal-bar">
-          <div class="goal-fill positive" id="goal-musculo-bar" style="width:0%;"></div>
-        </div>
+    <div id="analisis-content">
+      <div class="card" style="text-align:center;padding:40px 20px;">
+        <div style="font-size:48px;margin-bottom:12px;">📊</div>
+        <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Stats</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
       </div>
     </div>
-
-    <!-- Recomendaciones -->
-    <div class="recommendations">
-      <div class="rec-title">💡 Recomendaciones</div>
-      <div id="rec-list"></div>
-    </div>
-
-    <button class="close-modal-btn" onclick="closeAnalisisModal()">Cerrar análisis</button>
   </div>
-</div>
 
-<div class="toast" id="toast"></div>
+  <!-- HISTORIAL -->
+  <div class="panel" id="panel-historial">
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> Mes</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="reset-btn" onclick="previousMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">← Anterior</button>
+        <div style="flex:1;text-align:center;padding:8px;background:var(--s2);border-radius:var(--r-sm);font-family:'JetBrains Mono';font-size:11px;color:var(--text-2);" id="current-month">—</div>
+        <button class="reset-btn" onclick="nextMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">Siguiente →</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <div class="card" id="day-detail-card" style="display:none;">
+      <div id="day-detail-content"></div>
+    </div>
+
+    <!-- Configuración & Admin -->
+    <div class="card">
+      <div class="card-title"><span class="icon">⚙️</span> Configuración</div>
+      <div class="config-section">
+        <div class="config-title">Editar día específico</div>
+        <input type="date" class="config-date-input" id="config-date" />
+        <div class="input-row" style="margin-bottom:8px;">
+          <input class="num-input" type="number" id="config-sleep" min="0" max="24" step="0.5" placeholder="Sueño" />
+          <span class="unit">h</span>
+        </div>
+        <div class="input-row" style="margin-bottom:8px;">
+          <input class="num-input" type="number" id="config-water" min="0" max="5000" step="100" placeholder="Agua" />
+          <span class="unit">ml</span>
+        </div>
+        <div class="input-row" style="margin-bottom:8px;">
+          <input class="num-input" type="number" id="config-calorias" min="0" max="2000" step="50" placeholder="Kcal" />
+          <span class="unit">q</span>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
+          <input type="checkbox" id="config-train" style="width:16px;height:16px;cursor:pointer;" />
+          <span style="font-size:12px;color:var(--text-2);">Entrenamiento</span>
+        </label>
+        <button class="config-btn" onclick="updateDayData()">💾 Guardar cambios</button>
+      </div>
+
+      <div class="config-section">
+        <div class="config-title">Comparar fechas</div>
+        <div style="font-size:10px;color:var(--text-2);margin-bottom:10px;">Compara dos días para ver cambios</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:9px;color:var(--text-3);margin-bottom:4px;">Fecha 1</div>
+            <input type="date" class="config-date-input" id="compare-date1" style="margin-bottom:0;" />
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--text-3);margin-bottom:4px;">Fecha 2</div>
+            <input type="date" class="config-date-input" id="compare-date2" style="margin-bottom:0;" />
+          </div>
+        </div>
+        <button class="config-btn" onclick="compareNuevoClick()" style="margin-bottom:0;">🔄 Comparar</button>
+      </div>
+    </div>
+
+    <div id="comparison-result" style="display:none;"></div>
+  </div>
 
 <script>
 const URL_BASE='https://zfilewmutwyoomitgnsp.supabase.co/rest/v1';
@@ -379,9 +395,11 @@ let waterVal=0,trainDone=false,todayRecord=null;
 const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
 
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','stats'][i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','stats','analisis','historial'][i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
+  if(name==='analisis') loadAnalisisPanel();
+  if(name==='historial') loadHistorialPanel();
 }
 
 async function init(){
@@ -398,6 +416,7 @@ async function init(){
 function prefillForm(r){
   if(r.sueño_horas){document.getElementById('sleep-val').value=r.sueño_horas;updateSleepBar(r.sueño_horas);}
   if(r.entrenamiento){trainDone=true;document.getElementById('train-toggle').classList.add('on');document.getElementById('train-icon').textContent='✓';document.getElementById('train-label').textContent='Entrené hoy';}
+  if(r.calorias_quemadas){document.getElementById('calorias-quemadas').value=r.calorias_quemadas;}
   if(r.agua_ml){waterVal=r.agua_ml;updateWaterDisplay();}
   if(r.cuello_cm)document.getElementById('cuello-val').value=r.cuello_cm;
   if(r.abdomen_cm)document.getElementById('abdomen-val').value=r.abdomen_cm;
@@ -442,7 +461,10 @@ async function save(type){
   btns.forEach(b=>b.disabled=true);
   let payload={fecha:today};
   if(type==='sleep') payload.sueño_horas=parseFloat(document.getElementById('sleep-val').value)||0;
-  if(type==='train') payload.entrenamiento=trainDone;
+  if(type==='train'){
+    payload.entrenamiento=trainDone;
+    payload.calorias_quemadas=parseInt(document.getElementById('calorias-quemadas').value)||0;
+  }
   if(type==='water') payload.agua_ml=waterVal;
   try{
     if(todayRecord){
@@ -552,98 +574,166 @@ async function saveMedidas(){
     showToast(`📏 Medidas guardadas · Grasa: ${grasaPct.toFixed(1)}%`);
     loadHistorialMedidas();
     
-    // Mostrar modal de análisis
-    showAnalisisModal(peso,grasaPct,pesoGrasa,pesoMagro);
+    // Ir a pestaña de Análisis
+    switchTab('analisis');
   }catch(e){showToast('Error al guardar medidas');console.error(e);}
 }
 
-function showAnalisisModal(peso,grasaPct,pesoGrasa,pesoMagro){
-  const now=new Date();
-  const fechaFormato=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
-  
-  document.getElementById('modal-fecha').textContent=fechaFormato;
-  
-  // Composición corporal
-  const pesoAgua=pesoMagro*0.72;
-  const pesoProteina=pesoMagro*0.20;
-  const pesoHueso=pesoMagro*0.08;
-  
-  document.getElementById('comp-peso').textContent=peso.toFixed(1);
-  document.getElementById('comp-agua').textContent=pesoAgua.toFixed(1);
-  document.getElementById('comp-agua-pct').textContent=(72).toFixed(0);
-  document.getElementById('comp-grasa').textContent=pesoGrasa.toFixed(1);
-  document.getElementById('comp-grasa-pct').textContent=grasaPct.toFixed(1);
-  document.getElementById('comp-musculo').textContent=pesoProteina.toFixed(1);
-  document.getElementById('comp-musculo-pct').textContent=(20).toFixed(0);
-  
-  // Tipo de cuerpo
-  let tipoNombre,tipoDesc;
-  if(grasaPct<8){
-    tipoNombre='Esencial';
-    tipoDesc='Nivel de grasa vital. Muy bajo, requiere atención médica.';
-  }else if(grasaPct<20){
-    tipoNombre='Atlético';
-    tipoDesc='Excelente condición física. Bajo porcentaje de grasa con músculo definido.';
-  }else if(grasaPct<25){
-    tipoNombre='Normal';
-    tipoDesc='Composición saludable. Grasa y músculo en equilibrio.';
-  }else if(grasaPct<30){
-    tipoNombre='Elevado';
-    tipoDesc='Grasa moderadamente elevada. Requiere control de dieta y ejercicio.';
-  }else if(grasaPct<35){
-    tipoNombre='Sobrepeso';
-    tipoDesc='Exceso de grasa corporal. Se recomienda programa de actividad física.';
-  }else{
-    tipoNombre='Obesidad';
-    tipoDesc='Porcentaje de grasa alto. Necesita atención y control médico regular.';
-  }
-  
-  document.getElementById('body-type-name').textContent=tipoNombre;
-  document.getElementById('body-type-desc').textContent=tipoDesc;
-  
-  // Metas
-  const pesoIdeal=50+2.3*(ALTURA_CM/2.54-60);
-  const diffPeso=peso-pesoIdeal;
-  const grasaIdeal=pesoIdeal*0.18;
-  const diffGrasa=pesoGrasa-grasaIdeal;
-  const musculoIdeal=pesoIdeal*0.20*5;
-  const diffMusculo=pesoProteina-musculoIdeal;
-  
-  document.getElementById('goal-peso-diff').textContent=(diffPeso>0?'+':'')+diffPeso.toFixed(1)+' kg';
-  document.getElementById('goal-peso-bar').style.width=Math.min(100,Math.abs(diffPeso)*5)+'%';
-  document.getElementById('goal-peso-bar').className='goal-fill '+(diffPeso>0?'negative':'positive');
-  
-  document.getElementById('goal-grasa').textContent=(diffGrasa>0?'+':'')+diffGrasa.toFixed(1)+' kg';
-  document.getElementById('goal-grasa-bar').style.width=Math.min(100,Math.abs(diffGrasa)*5)+'%';
-  
-  document.getElementById('goal-musculo').textContent=(diffMusculo>0?'+':'')+diffMusculo.toFixed(2)+' kg';
-  document.getElementById('goal-musculo-bar').style.width=Math.min(100,Math.abs(diffMusculo)*5)+'%';
-  
-  // Recomendaciones
-  let recHtml='';
-  if(grasaPct>25){
-    recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Aumenta ejercicio aeróbico 30-40min, 4-5 veces por semana</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Agrega entrenamiento de fuerza 2-3 veces por semana</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Controla ingesta de calorías, aumenta proteína a 1.6g/kg</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">💧</div><div class="rec-text">Mantén hidratación: 3-4L de agua diaria</div></div>`;
-  }else if(grasaPct>20){
-    recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Mantén actividad regular 150-200min por semana</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Fortalecimiento muscular 2-3 veces por semana</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Dieta balanceada: 1.2-1.5g proteína por kg de peso</div></div>`;
-  }else{
-    recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Mantén rutina de fuerza para preservar masa muscular</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Continúa con actividad aeróbica moderada</div></div>`;
-    recHtml+=`<div class="rec-item"><div class="rec-icon">✨</div><div class="rec-text">Excelente condición física, mantén disciplina</div></div>`;
-  }
-  
-  document.getElementById('rec-list').innerHTML=recHtml;
-  
-  // Mostrar modal
-  document.getElementById('modal-analisis').classList.add('show');
-}
+async function loadAnalisisPanel(){
+  try{
+    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
+    const data=await res.json();
+    
+    if(!data.length){
+      document.getElementById('analisis-content').innerHTML=`
+        <div class="card" style="text-align:center;padding:40px 20px;">
+          <div style="font-size:48px;margin-bottom:12px;">📊</div>
+          <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Stats</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
+        </div>
+      `;
+      return;
+    }
+    
+    const m=data[0];
+    const peso=m.peso_grasa_kg+m.peso_magro_kg;
+    const grasaPct=m.grasa_pct;
+    const pesoGrasa=m.peso_grasa_kg;
+    const pesoMagro=m.peso_magro_kg;
+    
+    const now=new Date();
+    const fechaFormato=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
+    document.getElementById('analisis-date').textContent=fechaFormato;
+    
+    // Composición corporal
+    const pesoAgua=pesoMagro*0.72;
+    const pesoProteina=pesoMagro*0.20;
+    const pesoHueso=pesoMagro*0.08;
+    
+    // Tipo de cuerpo
+    let tipoNombre,tipoDesc;
+    if(grasaPct<8){
+      tipoNombre='Esencial';
+      tipoDesc='Nivel de grasa vital. Muy bajo, requiere atención médica.';
+    }else if(grasaPct<20){
+      tipoNombre='Atlético';
+      tipoDesc='Excelente condición física. Bajo porcentaje de grasa con músculo definido.';
+    }else if(grasaPct<25){
+      tipoNombre='Normal';
+      tipoDesc='Composición saludable. Grasa y músculo en equilibrio.';
+    }else if(grasaPct<30){
+      tipoNombre='Elevado';
+      tipoDesc='Grasa moderadamente elevada. Requiere control de dieta y ejercicio.';
+    }else if(grasaPct<35){
+      tipoNombre='Sobrepeso';
+      tipoDesc='Exceso de grasa corporal. Se recomienda programa de actividad física.';
+    }else{
+      tipoNombre='Obesidad';
+      tipoDesc='Porcentaje de grasa alto. Necesita atención y control médico regular.';
+    }
+    
+    // Metas
+    const pesoIdeal=50+2.3*(ALTURA_CM/2.54-60);
+    const diffPeso=peso-pesoIdeal;
+    const grasaIdeal=pesoIdeal*0.18;
+    const diffGrasa=pesoGrasa-grasaIdeal;
+    const musculoIdeal=pesoIdeal*0.20*5;
+    const diffMusculo=pesoProteina-musculoIdeal;
+    
+    // Recomendaciones
+    let recHtml='';
+    if(grasaPct>25){
+      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Aumenta ejercicio aeróbico 30-40min, 4-5 veces por semana</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Agrega entrenamiento de fuerza 2-3 veces por semana</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Controla ingesta de calorías, aumenta proteína a 1.6g/kg</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">💧</div><div class="rec-text">Mantén hidratación: 3-4L de agua diaria</div></div>`;
+    }else if(grasaPct>20){
+      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Mantén actividad regular 150-200min por semana</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Fortalecimiento muscular 2-3 veces por semana</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Dieta balanceada: 1.2-1.5g proteína por kg de peso</div></div>`;
+    }else{
+      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Mantén rutina de fuerza para preservar masa muscular</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Continúa con actividad aeróbica moderada</div></div>`;
+      recHtml+=`<div class="rec-item"><div class="rec-icon">✨</div><div class="rec-text">Excelente condición física, mantén disciplina</div></div>`;
+    }
+    
+    document.getElementById('analisis-content').innerHTML=`
+      <div style="margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Composición Corporal</div>
+        <div class="comp-visual">
+          <div class="comp-item">
+            <div class="comp-item-val">${peso.toFixed(1)}</div>
+            <div class="comp-item-label">Peso total</div>
+            <div class="comp-item-sub">kg</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val" style="color:var(--teal-l);">${pesoAgua.toFixed(1)}</div>
+            <div class="comp-item-label">Agua</div>
+            <div class="comp-item-sub">72%</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val" style="color:var(--red);">${pesoGrasa.toFixed(1)}</div>
+            <div class="comp-item-label">Grasa</div>
+            <div class="comp-item-sub">${grasaPct.toFixed(1)}%</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-val" style="color:var(--gold-l);">${pesoProteina.toFixed(1)}</div>
+            <div class="comp-item-label">Proteína</div>
+            <div class="comp-item-sub">20%</div>
+          </div>
+        </div>
+      </div>
 
-function closeAnalisisModal(){
-  document.getElementById('modal-analisis').classList.remove('show');
+      <div class="body-type-box">
+        <div class="body-type-label">Clasificación</div>
+        <div class="body-type-val">${tipoNombre}</div>
+        <div class="body-type-desc">${tipoDesc}</div>
+      </div>
+
+      <div class="recommendations">
+        <div class="rec-title">📊 Metas personalizadas</div>
+        <div style="font-size:11px;color:var(--text-2);margin-bottom:16px;">Para alcanzar peso ideal</div>
+        
+        <div class="goal-progress">
+          <div class="goal-label">
+            <span>Peso total</span>
+            <span>${(diffPeso>0?'+':'')+diffPeso.toFixed(1)} kg</span>
+          </div>
+          <div class="goal-bar">
+            <div class="goal-fill" style="width:${Math.min(100,Math.abs(diffPeso)*5)}%;background:${diffPeso>0?'var(--red)':'var(--green)'};"></div>
+          </div>
+        </div>
+
+        <div class="goal-progress">
+          <div class="goal-label">
+            <span>Grasa a perder</span>
+            <span>${(diffGrasa>0?'+':'')+diffGrasa.toFixed(1)} kg</span>
+          </div>
+          <div class="goal-bar">
+            <div class="goal-fill negative" style="width:${Math.min(100,Math.abs(diffGrasa)*5)};"></div>
+          </div>
+        </div>
+
+        <div class="goal-progress">
+          <div class="goal-label">
+            <span>Músculo a ganar</span>
+            <span>${(diffMusculo>0?'+':'')+diffMusculo.toFixed(2)} kg</span>
+          </div>
+          <div class="goal-bar">
+            <div class="goal-fill positive" style="width:${Math.min(100,Math.abs(diffMusculo)*5)};"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recommendations">
+        <div class="rec-title">💡 Recomendaciones</div>
+        ${recHtml}
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    document.getElementById('analisis-content').innerHTML=`<div class="card" style="text-align:center;color:var(--red);">Error al cargar análisis</div>`;
+  }
 }
 
 async function loadHistorialMedidas(){
@@ -679,6 +769,211 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+let currentMonth=new Date();
+async function loadHistorialPanel(){
+  loadCalendar();
+}
+
+function previousMonth(){
+  currentMonth.setMonth(currentMonth.getMonth()-1);
+  loadCalendar();
+}
+
+function nextMonth(){
+  currentMonth.setMonth(currentMonth.getMonth()+1);
+  loadCalendar();
+}
+
+async function loadCalendar(){
+  const year=currentMonth.getFullYear();
+  const month=currentMonth.getMonth();
+  
+  document.getElementById('current-month').textContent=currentMonth.toLocaleDateString('es-CO',{month:'long',year:'numeric',timeZone:'America/Bogota'}).toUpperCase();
+  
+  const firstDay=new Date(year,month,1);
+  const lastDay=new Date(year,month+1,0);
+  const daysInMonth=lastDay.getDate();
+  const startingDayOfWeek=firstDay.getDay();
+  
+  // Obtener datos del mes
+  const monthStart=new Date(year,month,1).toLocaleDateString('en-CA');
+  const monthEnd=new Date(year,month+1,0).toLocaleDateString('en-CA');
+  
+  try{
+    const res=await fetch(`${URL_BASE}/habits?fecha=gte.${monthStart}&fecha=lte.${monthEnd}&select=fecha,sueño_horas,entrenamiento,agua_ml,calorias_quemadas`,{headers:HEADERS});
+    const data=await res.json();
+    const dataByDate={};
+    data.forEach(d=>dataByDate[d.fecha]=d);
+    
+    let html='';
+    // Días vacíos antes del primer día
+    for(let i=0;i<startingDayOfWeek;i++){
+      html+=`<div class="calendar-day empty"></div>`;
+    }
+    
+    // Días del mes
+    for(let day=1;day<=daysInMonth;day++){
+      const dateStr=new Date(year,month,day).toLocaleDateString('en-CA');
+      const dayData=dataByDate[dateStr];
+      let status='empty';
+      let indicator='';
+      
+      if(dayData){
+        const count=(dayData.sueño_horas?1:0)+(dayData.entrenamiento?1:0)+(dayData.agua_ml>=2500?1:0);
+        if(count===3) status='ok';
+        else if(count>0) status='partial';
+        indicator=count>0?count:'';
+      }
+      
+      html+=`<div class="calendar-day ${status}" onclick="selectDay('${dateStr}')">${indicator||day}</div>`;
+    }
+    
+    document.getElementById('calendar-grid').innerHTML=html;
+  }catch(e){
+    console.error(e);
+    showToast('Error al cargar calendario');
+  }
+}
+
+async function selectDay(dateStr){
+  try{
+    const res=await fetch(`${URL_BASE}/habits?fecha=eq.${dateStr}&select=*`,{headers:HEADERS});
+    const data=await res.json();
+    const dayData=data[0]||{fecha:dateStr};
+    
+    const fecha=new Date(dateStr).toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
+    
+    let html=`
+      <div class="day-detail-fecha">
+        📅 ${fecha.charAt(0).toUpperCase()+fecha.slice(1)}
+        <button class="reset-btn" style="margin-left:auto;padding:4px 8px;font-size:9px;" onclick="editDay('${dateStr}')">Editar</button>
+      </div>
+      <div class="day-detail-stat">
+        <span class="day-detail-label">🌙 Sueño</span>
+        <span class="day-detail-val">${dayData.sueño_horas||0}h</span>
+      </div>
+      <div class="day-detail-stat">
+        <span class="day-detail-label">⚡ Entrenamiento</span>
+        <span class="day-detail-val">${dayData.entrenamiento?'✓ Sí':'○ No'}</span>
+      </div>
+      <div class="day-detail-stat">
+        <span class="day-detail-label">💧 Agua</span>
+        <span class="day-detail-val">${dayData.agua_ml||0}ml</span>
+      </div>
+      <div class="day-detail-stat">
+        <span class="day-detail-label">⚡ Calorías quemadas</span>
+        <span class="day-detail-val">${dayData.calorias_quemadas||0}kcal</span>
+      </div>
+    `;
+    
+    document.getElementById('day-detail-content').innerHTML=html;
+    document.getElementById('day-detail-card').style.display='block';
+  }catch(e){
+    console.error(e);
+  }
+}
+
+function editDay(dateStr){
+  document.getElementById('config-date').value=dateStr;
+  const el=document.querySelector('[id="config-date"]');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+async function updateDayData(){
+  const fecha=document.getElementById('config-date').value;
+  if(!fecha){showToast('Selecciona una fecha');return;}
+  
+  const payload={
+    fecha:fecha,
+    sueño_horas:parseFloat(document.getElementById('config-sleep').value)||0,
+    agua_ml:parseInt(document.getElementById('config-water').value)||0,
+    entrenamiento:document.getElementById('config-train').checked,
+    calorias_quemadas:parseInt(document.getElementById('config-calorias').value)||0
+  };
+  
+  try{
+    const res=await fetch(`${URL_BASE}/habits?fecha=eq.${fecha}&select=id`,{headers:HEADERS});
+    const exists=await res.json();
+    
+    if(exists.length){
+      await fetch(`${URL_BASE}/habits?id=eq.${exists[0].id}`,{method:'PATCH',headers:HEADERS,body:JSON.stringify(payload)});
+    }else{
+      await fetch(`${URL_BASE}/habits`,{method:'POST',headers:HEADERS,body:JSON.stringify(payload)});
+    }
+    
+    showToast('✓ Día actualizado');
+    loadCalendar();
+    selectDay(fecha);
+  }catch(e){
+    showToast('Error al guardar');
+    console.error(e);
+  }
+}
+
+async function compareNuevoClick(){
+  const date1=document.getElementById('compare-date1').value;
+  const date2=document.getElementById('compare-date2').value;
+  
+  if(!date1||!date2){showToast('Ingresa ambas fechas');return;}
+  
+  try{
+    const [res1,res2]=await Promise.all([
+      fetch(`${URL_BASE}/habits?fecha=eq.${date1}&select=*`,{headers:HEADERS}),
+      fetch(`${URL_BASE}/habits?fecha=eq.${date2}&select=*`,{headers:HEADERS})
+    ]);
+    
+    const data1=await res1.json(),data2=await res2.json();
+    const d1=data1[0]||{},d2=data2[0]||{};
+    
+    const f1=new Date(date1).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
+    const f2=new Date(date2).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
+    
+    let html=`
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span class="icon">🔄</span> Comparación</div>
+        <table class="comparison-table">
+          <tr>
+            <th>Métrica</th>
+            <th>${f1}</th>
+            <th>${f2}</th>
+            <th>Cambio</th>
+          </tr>
+          <tr>
+            <td>Sueño</td>
+            <td>${d1.sueño_horas||0}h</td>
+            <td>${d2.sueño_horas||0}h</td>
+            <td style="color:${(d2.sueño_horas||0)>(d1.sueño_horas||0)?'var(--green)':'var(--red)'}">${((d2.sueño_horas||0)-(d1.sueño_horas||0)).toFixed(1)}h</td>
+          </tr>
+          <tr>
+            <td>Agua</td>
+            <td>${d1.agua_ml||0}ml</td>
+            <td>${d2.agua_ml||0}ml</td>
+            <td style="color:${(d2.agua_ml||0)>(d1.agua_ml||0)?'var(--green)':'var(--red)'}">${((d2.agua_ml||0)-(d1.agua_ml||0))}ml</td>
+          </tr>
+          <tr>
+            <td>Kcal quemadas</td>
+            <td>${d1.calorias_quemadas||0}</td>
+            <td>${d2.calorias_quemadas||0}</td>
+            <td style="color:${(d2.calorias_quemadas||0)>(d1.calorias_quemadas||0)?'var(--green)':'var(--red)'}">${((d2.calorias_quemadas||0)-(d1.calorias_quemadas||0))}kcal</td>
+          </tr>
+          <tr>
+            <td>Entrenamiento</td>
+            <td>${d1.entrenamiento?'✓':'○'}</td>
+            <td>${d2.entrenamiento?'✓':'○'}</td>
+            <td>${d1.entrenamiento===d2.entrenamiento?'-':d2.entrenamiento?'✓':'○'}</td>
+          </tr>
+        </table>
+      </div>
+    `;
+    
+    document.getElementById('comparison-result').innerHTML=html;
+    document.getElementById('comparison-result').style.display='block';
+  }catch(e){
+    showToast('Error en comparación');
+    console.error(e);
+  }
 }
 
 init();
