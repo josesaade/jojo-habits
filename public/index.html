@@ -25,7 +25,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.9);backdrop-filt
 .brand-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.1em;background:linear-gradient(90deg,var(--gold-l),var(--purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .header-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-2);text-align:right;line-height:1.7;}
 .tabs{display:flex;gap:4px;}
-.tab{flex:1;background:none;border:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:10px 8px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;}
+.tab{flex:1;background:none;border:none;font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text-3);padding:10px 2px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap;}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold);}
 main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1;}
 .panel{display:none;}.panel.active{display:block;}
@@ -130,6 +130,15 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
 .config-date-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:10px;font-size:12px;margin-bottom:8px;}
 .config-btn{width:100%;padding:10px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-weight:600;cursor:pointer;font-size:12px;margin-bottom:8px;}
 .config-btn:hover{opacity:.9;}
+.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.measure-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.measure-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.measure-card-label{font-size:11px;color:var(--text-2);font-weight:600;}
+.measure-card-icon{font-size:20px;opacity:.85;}
+.measure-card input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;padding:8px 10px;outline:none;text-align:center;-webkit-appearance:none;}
+.measure-card input:focus{border-color:var(--gold);}
+.measure-section-title{font-size:10px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;}
+.measure-section-title:first-child{margin-top:0;}
 </style>
 </head>
 <body>
@@ -143,6 +152,7 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
   </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('habits')">Hábitos</button>
+    <button class="tab" onclick="switchTab('medidor')">Medidor</button>
     <button class="tab" onclick="switchTab('stats')">Stats</button>
     <button class="tab" onclick="switchTab('analisis')">Análisis</button>
     <button class="tab" onclick="switchTab('historial')">📅</button>
@@ -209,18 +219,83 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="panel" id="panel-stats">
-    <!-- Peso y cálculos básicos -->
+  <!-- MEDIDOR -->
+  <div class="panel" id="panel-medidor">
     <div class="card">
-      <div class="card-title"><span class="icon">⚖️</span> Peso actual</div>
-      <div class="input-row" style="margin-bottom:16px;">
-        <input class="num-input" type="number" id="weight-val" min="30" max="300" step="0.1" placeholder="0.0" />
+      <div class="card-title"><span class="icon">⚖️</span> Peso</div>
+      <div class="input-row" style="margin-bottom:0;">
+        <input class="num-input" type="number" id="peso-medidor" min="30" max="300" step="0.1" placeholder="0.0" />
         <span class="unit">kg</span>
       </div>
-      <button class="save-btn" onclick="calcStats()">Calcular IMC</button>
     </div>
 
+    <div class="card">
+      <div class="card-title"><span class="icon">📏</span> Medidas corporales</div>
+      <div class="card-subtitle">Toca cada tarjeta e ingresa la circunferencia en cm</div>
+
+      <div class="measure-grid">
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Cuello</span><span class="measure-card-icon">🧍</span></div>
+          <input type="number" step="0.1" id="m-cuello" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Hombro</span><span class="measure-card-icon">🏋️</span></div>
+          <input type="number" step="0.1" id="m-hombro" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Pecho</span><span class="measure-card-icon">🫁</span></div>
+          <input type="number" step="0.1" id="m-pecho" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Cintura/Abdomen</span><span class="measure-card-icon">🎯</span></div>
+          <input type="number" step="0.1" id="m-abdomen" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Brazo Izq.</span><span class="measure-card-icon">💪</span></div>
+          <input type="number" step="0.1" id="m-brazo-izq" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Brazo Der.</span><span class="measure-card-icon">💪</span></div>
+          <input type="number" step="0.1" id="m-brazo-der" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Antebrazo Izq.</span><span class="measure-card-icon">🤜</span></div>
+          <input type="number" step="0.1" id="m-antebrazo-izq" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Antebrazo Der.</span><span class="measure-card-icon">🤛</span></div>
+          <input type="number" step="0.1" id="m-antebrazo-der" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Muslo Izq.</span><span class="measure-card-icon">🦵</span></div>
+          <input type="number" step="0.1" id="m-muslo-izq" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Muslo Der.</span><span class="measure-card-icon">🦵</span></div>
+          <input type="number" step="0.1" id="m-muslo-der" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Pantorrilla Izq.</span><span class="measure-card-icon">🦿</span></div>
+          <input type="number" step="0.1" id="m-pantorrilla-izq" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Pantorrilla Der.</span><span class="measure-card-icon">🦿</span></div>
+          <input type="number" step="0.1" id="m-pantorrilla-der" placeholder="cm" />
+        </div>
+        <div class="measure-card">
+          <div class="measure-card-head"><span class="measure-card-label">Cadera</span><span class="measure-card-icon">🍑</span></div>
+          <input type="number" step="0.1" id="m-cadera" placeholder="cm" />
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveMedidor()" style="margin-top:16px;">Guardar medidas de hoy</button>
+      <button class="reset-btn" onclick="toggleHistorialMedidas()">Ver historial de medidas</button>
+      <div id="historial-medidas" style="display:none;margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="panel" id="panel-stats">
     <div id="stats-results" style="display:none;">
       <div class="stat-grid">
         <div class="stat-box">
@@ -237,13 +312,14 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
       <div class="detail-card" id="stats-detail">—</div>
     </div>
 
-    <!-- Medidas antropométricas -->
-    <div class="card" id="medidas-actuales-card" style="display:none;">
-      <div class="card-title"><span class="icon">📏</span> Medidas actuales</div>
-      <div id="medidas-actuales-content"></div>
+    <div class="card" id="stats-empty-card">
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:40px;margin-bottom:10px;">⚖️</div>
+        <div style="font-size:13px;color:var(--text-2);">Registra tu peso en la pestaña Medidor</div>
+      </div>
     </div>
 
-    <!-- Resultados de grasa corporal -->
+    <!-- Composición corporal -->
     <div id="grasa-results" style="display:none;">
       <div class="card">
         <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
@@ -274,39 +350,10 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span class="icon">📏</span> Medidas antropométricas</div>
-      <div class="card-subtitle">Circunferencias para cálculo de grasa (fórmula US Navy)</div>
-      
-      <div class="input-row">
-        <input class="num-input" type="number" id="cuello-val" min="20" max="50" step="0.1" placeholder="30" />
-        <span class="unit">cm - Cuello</span>
-      </div>
-      
-      <div class="input-row">
-        <input class="num-input" type="number" id="abdomen-val" min="50" max="150" step="0.1" placeholder="80" />
-        <span class="unit">cm - Abdomen</span>
-      </div>
-      
-      <div class="input-row">
-        <input class="num-input" type="number" id="bicep-val" min="20" max="50" step="0.1" placeholder="35" />
-        <span class="unit">cm - Bícep (opt)</span>
-      </div>
-      
-      <div class="input-row">
-        <input class="num-input" type="number" id="muslo-val" min="40" max="80" step="0.1" placeholder="55" />
-        <span class="unit">cm - Muslo (opt)</span>
-      </div>
-      
-      <div class="input-row">
-        <input class="num-input" type="number" id="cadera-val" min="80" max="130" step="0.1" placeholder="95" />
-        <span class="unit">cm - Cadera (opt)</span>
-      </div>
-      
-      <button class="save-btn" onclick="saveMedidas()">Guardar Medidas</button>
-      <button class="reset-btn" onclick="toggleHistorialMedidas()">Ver historial</button>
-      
-      <div id="historial-medidas" style="display:none;margin-top:16px;"></div>
+    <!-- Medidas actuales (solo lectura) -->
+    <div class="card" id="medidas-actuales-card" style="display:none;">
+      <div class="card-title"><span class="icon">📏</span> Medidas actuales</div>
+      <div id="medidas-actuales-content"></div>
     </div>
   </div>
 
@@ -322,7 +369,7 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
     <div id="analisis-content">
       <div class="card" style="text-align:center;padding:40px 20px;">
         <div style="font-size:48px;margin-bottom:12px;">📊</div>
-        <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Stats</div>
+        <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Medidor</div>
         <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
       </div>
     </div>
@@ -416,9 +463,10 @@ function parseLocalDate(dateStr){
 }
 
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','stats','analisis','historial'][i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','medidor','stats','analisis','historial'][i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
+  if(name==='medidor') loadMedidorPanel();
   if(name==='analisis') loadAnalisisPanel();
   if(name==='historial') loadHistorialPanel();
   if(name==='stats') loadStatsPanel();
@@ -456,11 +504,6 @@ function prefillForm(r){
   if(r.entrenamiento){trainDone=true;document.getElementById('train-toggle').classList.add('on');document.getElementById('train-icon').textContent='✓';document.getElementById('train-label').textContent='Entrené hoy';}
   if(r.calorias_quemadas){document.getElementById('calorias-quemadas').value=r.calorias_quemadas;}
   if(r.agua_ml){waterVal=r.agua_ml;updateWaterDisplay();}
-  if(r.cuello_cm)document.getElementById('cuello-val').value=r.cuello_cm;
-  if(r.abdomen_cm)document.getElementById('abdomen-val').value=r.abdomen_cm;
-  if(r.bicep_cm)document.getElementById('bicep-val').value=r.bicep_cm;
-  if(r.muslo_cm)document.getElementById('muslo-val').value=r.muslo_cm;
-  if(r.cadera_cm)document.getElementById('cadera-val').value=r.cadera_cm;
   updateChips(r);
 }
 
@@ -518,9 +561,88 @@ async function save(type){
   finally{btns.forEach(b=>b.disabled=false);}
 }
 
-function calcStats(){
-  const peso=parseFloat(document.getElementById('weight-val').value);
-  if(!peso||peso<30){showToast('Ingresa tu peso');return;}
+function calcularGrasaUSNavy(cuello,abdomen,altura){
+  const grasaPct=(86.010*Math.log10(abdomen-cuello))-(70.041*Math.log10(altura))+36.76;
+  return Math.max(5,Math.min(60,grasaPct));
+}
+
+function getMedidorValue(id){
+  const v=parseFloat(document.getElementById(id).value);
+  return isNaN(v)?null:v;
+}
+
+async function loadMedidorPanel(){
+  try{
+    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
+    const data=await res.json();
+    if(!data.length)return;
+    const m=data[0];
+    const map={
+      'peso-medidor':'peso_kg','m-cuello':'cuello_cm','m-hombro':'hombro_cm','m-pecho':'pecho_cm','m-abdomen':'abdomen_cm',
+      'm-brazo-izq':'brazo_izq_cm','m-brazo-der':'brazo_der_cm','m-antebrazo-izq':'antebrazo_izq_cm','m-antebrazo-der':'antebrazo_der_cm',
+      'm-muslo-izq':'muslo_izq_cm','m-muslo-der':'muslo_der_cm','m-pantorrilla-izq':'pantorrilla_izq_cm','m-pantorrilla-der':'pantorrilla_der_cm',
+      'm-cadera':'cadera_cm'
+    };
+    Object.entries(map).forEach(([elId,field])=>{
+      if(m[field]!=null)document.getElementById(elId).value=m[field];
+    });
+  }catch(e){console.error(e);}
+}
+
+async function saveMedidor(){
+  const peso=getMedidorValue('peso-medidor');
+  const cuello=getMedidorValue('m-cuello');
+  const hombro=getMedidorValue('m-hombro');
+  const pecho=getMedidorValue('m-pecho');
+  const abdomen=getMedidorValue('m-abdomen');
+  const brazoIzq=getMedidorValue('m-brazo-izq');
+  const brazoDer=getMedidorValue('m-brazo-der');
+  const antebrazoIzq=getMedidorValue('m-antebrazo-izq');
+  const antebrazoDer=getMedidorValue('m-antebrazo-der');
+  const musloIzq=getMedidorValue('m-muslo-izq');
+  const musloDer=getMedidorValue('m-muslo-der');
+  const pantorrillaIzq=getMedidorValue('m-pantorrilla-izq');
+  const pantorrillaDer=getMedidorValue('m-pantorrilla-der');
+  const cadera=getMedidorValue('m-cadera');
+
+  const payload={
+    fecha:today,
+    peso_kg:peso,
+    cuello_cm:cuello,
+    hombro_cm:hombro,
+    pecho_cm:pecho,
+    abdomen_cm:abdomen,
+    brazo_izq_cm:brazoIzq,
+    brazo_der_cm:brazoDer,
+    antebrazo_izq_cm:antebrazoIzq,
+    antebrazo_der_cm:antebrazoDer,
+    muslo_izq_cm:musloIzq,
+    muslo_der_cm:musloDer,
+    pantorrilla_izq_cm:pantorrillaIzq,
+    pantorrilla_der_cm:pantorrillaDer,
+    cadera_cm:cadera
+  };
+
+  // Si hay cuello+abdomen+peso, calculamos grasa corporal con US Navy
+  if(cuello&&abdomen&&peso){
+    const grasaPct=calcularGrasaUSNavy(cuello,abdomen,ALTURA_CM);
+    payload.grasa_pct=grasaPct;
+    payload.peso_grasa_kg=(peso*grasaPct)/100;
+    payload.peso_magro_kg=peso-payload.peso_grasa_kg;
+  }
+
+  try{
+    await fetch(`${URL_BASE}/medidas_antropometricas?on_conflict=fecha`,{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify(payload)
+    });
+    showToast('📏 Medidas guardadas');
+    loadHistorialMedidas();
+  }catch(e){showToast('Error al guardar medidas');console.error(e);}
+}
+
+function calcStatsFrom(peso){
   const alturaM=ALTURA_CM/100;
   const imc=peso/(alturaM*alturaM);
   let imcClass,imcColor;
@@ -536,10 +658,6 @@ function calcStats(){
   document.getElementById('imc-val').className='stat-box-val '+(imcColor==='normal'?'green':imcColor==='sobrepeso'?'yellow':'red');
   document.getElementById('imc-badge').innerHTML=`<span class="badge ${imcColor}">${imcClass}</span>`;
   document.getElementById('ideal-val').textContent=pesoIdeal.toFixed(1)+' kg';
-  const diffEl=document.getElementById('diff-val');
-  diffEl.textContent=(diff>0?'+':'')+diff.toFixed(1)+' kg';
-  diffEl.className='stat-box-val '+(Math.abs(diff)<2?'green':diff>0?'red':'yellow');
-  document.getElementById('diff-sub').textContent=diff>0?'por encima del ideal':diff<0?'por debajo del ideal':'en peso ideal';
   document.getElementById('stats-detail').innerHTML=`
     <strong style="color:var(--gold-l);display:block;margin-bottom:6px;">Resumen</strong>
     Peso: <strong style="color:var(--text)">${peso} kg</strong> · Altura: <strong style="color:var(--text)">${ALTURA_CM} cm</strong> · Edad: <strong style="color:var(--text)">${EDAD} años</strong><br>
@@ -548,86 +666,19 @@ function calcStats(){
     ${Math.abs(diff)>0.5?`${diff>0?'Bajar':'Subir'} <strong style="color:var(--text)">${Math.abs(diff).toFixed(1)} kg</strong> para llegar al peso ideal`:'<strong style="color:var(--green)">¡Estás en tu peso ideal!</strong>'}
   `;
   document.getElementById('stats-results').style.display='block';
-}
-
-function calcularGrasaUSNavy(cuello,abdomen,altura){
-  const grasaPct=(86.010*Math.log10(abdomen-cuello))-(70.041*Math.log10(altura))+36.76;
-  return Math.max(5,Math.min(60,grasaPct));
-}
-
-async function saveMedidas(){
-  const cuello=parseFloat(document.getElementById('cuello-val').value);
-  const abdomen=parseFloat(document.getElementById('abdomen-val').value);
-  const bicep=parseFloat(document.getElementById('bicep-val').value);
-  const muslo=parseFloat(document.getElementById('muslo-val').value);
-  const cadera=parseFloat(document.getElementById('cadera-val').value);
-  
-  if(!cuello||!abdomen){showToast('Ingresa cuello y abdomen');return;}
-  
-  const grasaPct=calcularGrasaUSNavy(cuello,abdomen,ALTURA_CM);
-  const peso=parseFloat(document.getElementById('weight-val').value);
-  
-  if(!peso){showToast('Calcula peso primero');return;}
-  
-  const pesoGrasa=(peso*grasaPct)/100;
-  const pesoMagro=peso-pesoGrasa;
-  
-  const payload={fecha:today,cuello_cm:cuello,abdomen_cm:abdomen,bicep_cm:bicep||null,muslo_cm:muslo||null,cadera_cm:cadera||null,grasa_pct:grasaPct,peso_grasa_kg:pesoGrasa,peso_magro_kg:pesoMagro};
-  
-  try{
-    // Guardar en medidas_antropometricas (upsert por fecha)
-    await fetch(`${URL_BASE}/medidas_antropometricas?on_conflict=fecha`,{
-      method:'POST',
-      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates'},
-      body:JSON.stringify(payload)
-    });
-    
-    // Guardar también en habits (upsert por fecha)
-    const resHabits=await fetch(`${URL_BASE}/habits?on_conflict=fecha`,{
-      method:'POST',
-      headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},
-      body:JSON.stringify({fecha:today,cuello_cm:cuello,abdomen_cm:abdomen,bicep_cm:bicep||null,muslo_cm:muslo||null,cadera_cm:cadera||null})
-    });
-    const habitsData=await resHabits.json();
-    if(habitsData[0])todayRecord=habitsData[0];
-    
-    // Mostrar resultados
-    document.getElementById('grasa-results').style.display='block';
-    document.getElementById('grasa-val').textContent=grasaPct.toFixed(1)+'%';
-    
-    let grasaClass,grasaColor;
-    if(grasaPct<8){grasaClass='Esencial';grasaColor='bajo';}
-    else if(grasaPct<20){grasaClass='Atlético';grasaColor='atletico';}
-    else if(grasaPct<25){grasaClass='Normal';grasaColor='normal';}
-    else if(grasaPct<30){grasaClass='Elevado';grasaColor='alto';}
-    else{grasaClass='Obesidad';grasaColor='obesidad';}
-    
-    document.getElementById('grasa-badge').innerHTML=`<span class="badge ${grasaColor}">${grasaClass}</span>`;
-    document.getElementById('magro-val').textContent=pesoMagro.toFixed(1);
-    document.getElementById('peso-grasa-val').textContent=pesoGrasa.toFixed(1);
-    
-    const diff=peso-(50+2.3*(ALTURA_CM/2.54-60));
-    document.getElementById('diff-val').textContent=(diff>0?'+':'')+diff.toFixed(1)+' kg';
-    document.getElementById('diff-val').className='stat-box-val '+(Math.abs(diff)<2?'green':diff>0?'red':'yellow');
-    
-    showToast(`📏 Medidas guardadas · Grasa: ${grasaPct.toFixed(1)}%`);
-    loadHistorialMedidas();
-    
-    // Ir a pestaña de Análisis
-    switchTab('analisis');
-  }catch(e){showToast('Error al guardar medidas');console.error(e);}
+  document.getElementById('stats-empty-card').style.display='none';
 }
 
 async function loadAnalisisPanel(){
   try{
-    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
+    const res=await fetch(`${URL_BASE}/medidas_antropometricas?order=fecha.desc&limit=1&select=*`,{headers:HEADERS});
     const data=await res.json();
     
-    if(!data.length){
+    if(!data.length||data[0].grasa_pct==null){
       document.getElementById('analisis-content').innerHTML=`
         <div class="card" style="text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:12px;">📊</div>
-          <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Stats</div>
+          <div style="font-size:13px;color:var(--text-2);">Ingresa tu peso, cuello y abdomen en Medidor</div>
           <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
         </div>
       `;
@@ -642,8 +693,7 @@ async function loadAnalisisPanel(){
     const cuello=m.cuello_cm;
     const abdomen=m.abdomen_cm;
     
-    const now=new Date();
-    const fechaFormato=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
+    const fechaFormato=parseLocalDate(m.fecha).toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
     document.getElementById('analisis-date').textContent=fechaFormato;
     
     // Composición corporal
@@ -706,20 +756,27 @@ async function loadAnalisisPanel(){
       recHtml+=`<div class="rec-item"><div class="rec-icon">✨</div><div class="rec-text">Excelente condición física, mantén disciplina</div></div>`;
     }
     
+    const camposMedidas=[
+      ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
+      ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
+      ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
+      ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
+      ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
+      ['cadera_cm','Cadera']
+    ];
+    const medidasHtml=camposMedidas.filter(([k])=>m[k]!=null).map(([k,label])=>`
+      <div class="comp-item">
+        <div class="comp-item-val">${m[k]}</div>
+        <div class="comp-item-label">${label}</div>
+        <div class="comp-item-sub">cm</div>
+      </div>
+    `).join('');
+    
     document.getElementById('analisis-content').innerHTML=`
       <div class="card">
         <div class="card-title"><span class="icon">📏</span> Medidas antropométricas</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="comp-item">
-            <div class="comp-item-val">${cuello}</div>
-            <div class="comp-item-label">Cuello</div>
-            <div class="comp-item-sub">cm</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val">${abdomen}</div>
-            <div class="comp-item-label">Abdomen</div>
-            <div class="comp-item-sub">cm</div>
-          </div>
+          ${medidasHtml}
         </div>
       </div>
 
@@ -835,12 +892,16 @@ async function loadHistorialMedidas(){
     
     let html='<div style="font-size:11px;color:var(--text-2);margin-bottom:8px;">📊 Últimas medidas:</div>';
     data.forEach(m=>{
+      const fechaFmt=parseLocalDate(m.fecha).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
+      const partes=[];
+      if(m.peso_kg!=null)partes.push(`Peso: <strong>${m.peso_kg}</strong>kg`);
+      if(m.grasa_pct!=null)partes.push(`Grasa: <strong>${m.grasa_pct.toFixed(1)}%</strong>`);
+      if(m.abdomen_cm!=null)partes.push(`Abd: <strong>${m.abdomen_cm}</strong>cm`);
+      if(m.cuello_cm!=null)partes.push(`Cuello: <strong>${m.cuello_cm}</strong>cm`);
+      if(m.cadera_cm!=null)partes.push(`Cadera: <strong>${m.cadera_cm}</strong>cm`);
       html+=`<div class="historial-item">
-        <div class="historial-fecha">${m.fecha}</div>
-        <div class="historial-data">
-          Grasa: <strong>${m.grasa_pct.toFixed(1)}%</strong> | Magro: <strong>${m.peso_magro_kg.toFixed(1)}</strong>kg<br>
-          Abd: <strong>${m.abdomen_cm}</strong>cm | Cuello: <strong>${m.cuello_cm}</strong>cm
-        </div>
+        <div class="historial-fecha">${fechaFmt}</div>
+        <div class="historial-data">${partes.join(' · ')||'Sin datos'}</div>
       </div>`;
     });
     document.getElementById('historial-medidas').innerHTML=html;
@@ -866,34 +927,69 @@ function showToast(msg){
 let currentMonth=new Date();
 async function loadStatsPanel(){
   try{
-    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
+    // Traemos el registro más reciente que tenga datos (hoy o el último guardado)
+    const res=await fetch(`${URL_BASE}/medidas_antropometricas?order=fecha.desc&limit=1&select=*`,{headers:HEADERS});
     const data=await res.json();
     
-    if(data.length){
-      const m=data[0];
-      const html=`
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="comp-item">
-            <div class="comp-item-val">${m.cuello_cm}</div>
-            <div class="comp-item-label">Cuello</div>
-            <div class="comp-item-sub">cm</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val">${m.abdomen_cm}</div>
-            <div class="comp-item-label">Abdomen</div>
-            <div class="comp-item-sub">cm</div>
-          </div>
-          ${m.bicep_cm?`<div class="comp-item"><div class="comp-item-val">${m.bicep_cm}</div><div class="comp-item-label">Bícep</div><div class="comp-item-sub">cm</div></div>`:``}
-          ${m.muslo_cm?`<div class="comp-item"><div class="comp-item-val">${m.muslo_cm}</div><div class="comp-item-label">Muslo</div><div class="comp-item-sub">cm</div></div>`:``}
-          ${m.cadera_cm?`<div class="comp-item"><div class="comp-item-val">${m.cadera_cm}</div><div class="comp-item-label">Cadera</div><div class="comp-item-sub">cm</div></div>`:``}
-          <div class="comp-item">
-            <div class="comp-item-val" style="color:var(--red);">${m.grasa_pct.toFixed(1)}</div>
-            <div class="comp-item-label">Grasa</div>
-            <div class="comp-item-sub">%</div>
-          </div>
-        </div>
-      `;
-      document.getElementById('medidas-actuales-content').innerHTML=html;
+    if(!data.length){
+      document.getElementById('stats-results').style.display='none';
+      document.getElementById('grasa-results').style.display='none';
+      document.getElementById('medidas-actuales-card').style.display='none';
+      document.getElementById('stats-empty-card').style.display='block';
+      return;
+    }
+    
+    const m=data[0];
+    
+    // IMC y peso ideal (si hay peso registrado)
+    if(m.peso_kg){
+      calcStatsFrom(m.peso_kg);
+    }else{
+      document.getElementById('stats-results').style.display='none';
+      document.getElementById('stats-empty-card').style.display='block';
+    }
+    
+    // Composición corporal (si hay grasa calculada)
+    if(m.grasa_pct){
+      document.getElementById('grasa-results').style.display='block';
+      document.getElementById('grasa-val').textContent=m.grasa_pct.toFixed(1)+'%';
+      let grasaClass,grasaColor;
+      if(m.grasa_pct<8){grasaClass='Esencial';grasaColor='bajo';}
+      else if(m.grasa_pct<20){grasaClass='Atlético';grasaColor='atletico';}
+      else if(m.grasa_pct<25){grasaClass='Normal';grasaColor='normal';}
+      else if(m.grasa_pct<30){grasaClass='Elevado';grasaColor='alto';}
+      else{grasaClass='Obesidad';grasaColor='obesidad';}
+      document.getElementById('grasa-badge').innerHTML=`<span class="badge ${grasaColor}">${grasaClass}</span>`;
+      document.getElementById('magro-val').textContent=(m.peso_magro_kg||0).toFixed(1);
+      document.getElementById('peso-grasa-val').textContent=(m.peso_grasa_kg||0).toFixed(1);
+      const pesoIdeal=50+2.3*(ALTURA_CM/2.54-60);
+      const diff=(m.peso_kg||0)-pesoIdeal;
+      document.getElementById('diff-val').textContent=(diff>0?'+':'')+diff.toFixed(1)+' kg';
+      document.getElementById('diff-val').className='stat-box-val '+(Math.abs(diff)<2?'green':diff>0?'red':'yellow');
+      document.getElementById('diff-sub').textContent=diff>0?'por encima del ideal':diff<0?'por debajo del ideal':'en peso ideal';
+    }else{
+      document.getElementById('grasa-results').style.display='none';
+    }
+    
+    // Todas las medidas actuales
+    const campos=[
+      ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
+      ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
+      ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
+      ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
+      ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
+      ['cadera_cm','Cadera']
+    ];
+    const itemsHtml=campos.filter(([k])=>m[k]!=null).map(([k,label])=>`
+      <div class="comp-item">
+        <div class="comp-item-val">${m[k]}</div>
+        <div class="comp-item-label">${label}</div>
+        <div class="comp-item-sub">cm</div>
+      </div>
+    `).join('');
+    
+    if(itemsHtml){
+      document.getElementById('medidas-actuales-content').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">${itemsHtml}</div>`;
       document.getElementById('medidas-actuales-card').style.display='block';
     }else{
       document.getElementById('medidas-actuales-card').style.display='none';
@@ -1029,40 +1125,35 @@ async function selectDay(dateStr){
     `;
     
     if(medidas){
-      const pesoTotal=(medidas.peso_grasa_kg||0)+(medidas.peso_magro_kg||0);
+      const pesoTotal=medidas.peso_kg||((medidas.peso_grasa_kg||0)+(medidas.peso_magro_kg||0));
+      const camposMedidas=[
+        ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
+        ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
+        ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
+        ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
+        ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
+        ['cadera_cm','Cadera']
+      ];
+      const medidasStatsHtml=camposMedidas.filter(([k])=>medidas[k]!=null).map(([k,label])=>`
+          <div class="day-detail-stat">
+            <span class="day-detail-label">${label}</span>
+            <span class="day-detail-val">${medidas[k]}cm</span>
+          </div>
+      `).join('');
       html+=`
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
           <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Medidas antropométricas</div>
-          <div class="day-detail-stat">
-            <span class="day-detail-label">Cuello</span>
-            <span class="day-detail-val">${medidas.cuello_cm||'—'}cm</span>
-          </div>
-          <div class="day-detail-stat">
-            <span class="day-detail-label">Abdomen</span>
-            <span class="day-detail-val">${medidas.abdomen_cm||'—'}cm</span>
-          </div>
-          <div class="day-detail-stat">
-            <span class="day-detail-label">Bícep</span>
-            <span class="day-detail-val">${medidas.bicep_cm||'—'}${medidas.bicep_cm?'cm':''}</span>
-          </div>
-          <div class="day-detail-stat">
-            <span class="day-detail-label">Muslo</span>
-            <span class="day-detail-val">${medidas.muslo_cm||'—'}${medidas.muslo_cm?'cm':''}</span>
-          </div>
-          <div class="day-detail-stat">
-            <span class="day-detail-label">Cadera</span>
-            <span class="day-detail-val">${medidas.cadera_cm||'—'}${medidas.cadera_cm?'cm':''}</span>
-          </div>
+          ${medidasStatsHtml||'<div style="font-size:11px;color:var(--text-3);">Sin medidas registradas</div>'}
         </div>
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
           <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Composición corporal</div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Peso total</span>
-            <span class="day-detail-val">${pesoTotal.toFixed(1)}kg</span>
+            <span class="day-detail-val">${pesoTotal?pesoTotal.toFixed(1):'—'}kg</span>
           </div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Grasa corporal</span>
-            <span class="day-detail-val" style="color:var(--red);">${medidas.grasa_pct.toFixed(1)}%</span>
+            <span class="day-detail-val" style="color:var(--red);">${medidas.grasa_pct!=null?medidas.grasa_pct.toFixed(1)+'%':'—'}</span>
           </div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Peso de grasa</span>
@@ -1176,54 +1267,41 @@ async function compareNuevoClick(){
     `;
     
     if(m1&&m2){
-      const pesoT1=(m1.peso_grasa_kg||0)+(m1.peso_magro_kg||0);
-      const pesoT2=(m2.peso_grasa_kg||0)+(m2.peso_magro_kg||0);
+      const pesoT1=m1.peso_kg||((m1.peso_grasa_kg||0)+(m1.peso_magro_kg||0));
+      const pesoT2=m2.peso_kg||((m2.peso_grasa_kg||0)+(m2.peso_magro_kg||0));
+      const camposComparar=[
+        ['cuello_cm','Cuello',false],['hombro_cm','Hombro',false],['pecho_cm','Pecho',false],['abdomen_cm','Cintura/Abdomen',false],
+        ['brazo_izq_cm','Brazo Izq',true],['brazo_der_cm','Brazo Der',true],
+        ['antebrazo_izq_cm','Antebrazo Izq',true],['antebrazo_der_cm','Antebrazo Der',true],
+        ['muslo_izq_cm','Muslo Izq',true],['muslo_der_cm','Muslo Der',true],
+        ['pantorrilla_izq_cm','Pantorrilla Izq',true],['pantorrilla_der_cm','Pantorrilla Der',true],
+        ['cadera_cm','Cadera',false]
+      ];
+      html+=`<tr><td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Medidas Antropométricas</td></tr>`;
+      camposComparar.forEach(([k,label,subeEsBueno])=>{
+        if(m1[k]==null||m2[k]==null)return;
+        const mejor=subeEsBueno?(m2[k]>m1[k]):(m2[k]<m1[k]);
+        html+=`
+          <tr>
+            <td>${label}</td>
+            <td>${m1[k]}cm</td>
+            <td>${m2[k]}cm</td>
+            <td style="color:${mejor?'var(--green)':'var(--red)'}">${(m2[k]-m1[k]).toFixed(1)}cm</td>
+          </tr>`;
+      });
       html+=`
-          <tr>
-            <td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Medidas Antropométricas</td>
-          </tr>
-          <tr>
-            <td>Cuello</td>
-            <td>${m1.cuello_cm}cm</td>
-            <td>${m2.cuello_cm}cm</td>
-            <td style="color:${m2.cuello_cm<m1.cuello_cm?'var(--green)':'var(--red)'}">${(m2.cuello_cm-m1.cuello_cm).toFixed(1)}cm</td>
-          </tr>
-          <tr>
-            <td>Abdomen</td>
-            <td>${m1.abdomen_cm}cm</td>
-            <td>${m2.abdomen_cm}cm</td>
-            <td style="color:${m2.abdomen_cm<m1.abdomen_cm?'var(--green)':'var(--red)'}">${(m2.abdomen_cm-m1.abdomen_cm).toFixed(1)}cm</td>
-          </tr>
-          ${(m1.bicep_cm&&m2.bicep_cm)?`
-          <tr>
-            <td>Bícep</td>
-            <td>${m1.bicep_cm}cm</td>
-            <td>${m2.bicep_cm}cm</td>
-            <td style="color:${m2.bicep_cm>m1.bicep_cm?'var(--green)':'var(--red)'}">${(m2.bicep_cm-m1.bicep_cm).toFixed(1)}cm</td>
-          </tr>`:''}
-          ${(m1.muslo_cm&&m2.muslo_cm)?`
-          <tr>
-            <td>Muslo</td>
-            <td>${m1.muslo_cm}cm</td>
-            <td>${m2.muslo_cm}cm</td>
-            <td style="color:${m2.muslo_cm>m1.muslo_cm?'var(--green)':'var(--red)'}">${(m2.muslo_cm-m1.muslo_cm).toFixed(1)}cm</td>
-          </tr>`:''}
-          ${(m1.cadera_cm&&m2.cadera_cm)?`
-          <tr>
-            <td>Cadera</td>
-            <td>${m1.cadera_cm}cm</td>
-            <td>${m2.cadera_cm}cm</td>
-            <td style="color:${m2.cadera_cm<m1.cadera_cm?'var(--green)':'var(--red)'}">${(m2.cadera_cm-m1.cadera_cm).toFixed(1)}cm</td>
-          </tr>`:''}
           <tr>
             <td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Composición corporal</td>
           </tr>
           <tr>
             <td>Peso total</td>
-            <td>${pesoT1.toFixed(1)}kg</td>
-            <td>${pesoT2.toFixed(1)}kg</td>
+            <td>${pesoT1?pesoT1.toFixed(1):'—'}kg</td>
+            <td>${pesoT2?pesoT2.toFixed(1):'—'}kg</td>
             <td style="color:${pesoT2<pesoT1?'var(--green)':'var(--red)'}">${(pesoT2-pesoT1).toFixed(1)}kg</td>
           </tr>
+      `;
+      if(m1.grasa_pct!=null&&m2.grasa_pct!=null){
+        html+=`
           <tr>
             <td>Grasa corporal</td>
             <td>${m1.grasa_pct.toFixed(1)}%</td>
@@ -1236,7 +1314,8 @@ async function compareNuevoClick(){
             <td>${(m2.peso_magro_kg||0).toFixed(1)}kg</td>
             <td style="color:${(m2.peso_magro_kg||0)>(m1.peso_magro_kg||0)?'var(--green)':'var(--red)'}">${((m2.peso_magro_kg||0)-(m1.peso_magro_kg||0)).toFixed(1)}kg</td>
           </tr>
-      `;
+        `;
+      }
     }else if(m1||m2){
       html+=`<tr><td colspan="4" style="font-size:10px;color:var(--text-2);text-align:center;">Solo una fecha tiene medidas</td></tr>`;
     }
