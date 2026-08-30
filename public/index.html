@@ -408,6 +408,13 @@ const META_SLEEP=8,META_WATER=2500,ALTURA_CM=171,EDAD=29;
 let waterVal=0,trainDone=false,todayRecord=null;
 const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
 
+// Parsea un string "YYYY-MM-DD" como fecha LOCAL (evita el corrimiento de -1 día
+// que ocurre con new Date("YYYY-MM-DD") al interpretarse como UTC medianoche)
+function parseLocalDate(dateStr){
+  const [y,m,d]=dateStr.split('-').map(Number);
+  return new Date(y,m-1,d);
+}
+
 function switchTab(name){
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','stats','analisis','historial'][i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -996,7 +1003,7 @@ async function selectDay(dateStr){
     const medidasData=await resMedidas.json();
     const medidas=medidasData[0];
     
-    const fecha=new Date(dateStr).toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
+    const fecha=parseLocalDate(dateStr).toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
     
     let html=`
       <div class="day-detail-fecha">
@@ -1022,24 +1029,48 @@ async function selectDay(dateStr){
     `;
     
     if(medidas){
+      const pesoTotal=(medidas.peso_grasa_kg||0)+(medidas.peso_magro_kg||0);
       html+=`
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-          <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Medidas</div>
+          <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Medidas antropométricas</div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Cuello</span>
-            <span class="day-detail-val">${medidas.cuello_cm}cm</span>
+            <span class="day-detail-val">${medidas.cuello_cm||'—'}cm</span>
           </div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Abdomen</span>
-            <span class="day-detail-val">${medidas.abdomen_cm}cm</span>
+            <span class="day-detail-val">${medidas.abdomen_cm||'—'}cm</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Bícep</span>
+            <span class="day-detail-val">${medidas.bicep_cm||'—'}${medidas.bicep_cm?'cm':''}</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Muslo</span>
+            <span class="day-detail-val">${medidas.muslo_cm||'—'}${medidas.muslo_cm?'cm':''}</span>
+          </div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Cadera</span>
+            <span class="day-detail-val">${medidas.cadera_cm||'—'}${medidas.cadera_cm?'cm':''}</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;">Composición corporal</div>
+          <div class="day-detail-stat">
+            <span class="day-detail-label">Peso total</span>
+            <span class="day-detail-val">${pesoTotal.toFixed(1)}kg</span>
           </div>
           <div class="day-detail-stat">
             <span class="day-detail-label">Grasa corporal</span>
             <span class="day-detail-val" style="color:var(--red);">${medidas.grasa_pct.toFixed(1)}%</span>
           </div>
           <div class="day-detail-stat">
+            <span class="day-detail-label">Peso de grasa</span>
+            <span class="day-detail-val" style="color:var(--red);">${(medidas.peso_grasa_kg||0).toFixed(1)}kg</span>
+          </div>
+          <div class="day-detail-stat">
             <span class="day-detail-label">Peso magro</span>
-            <span class="day-detail-val" style="color:var(--green);">${medidas.peso_magro_kg.toFixed(1)}kg</span>
+            <span class="day-detail-val" style="color:var(--green);">${(medidas.peso_magro_kg||0).toFixed(1)}kg</span>
           </div>
         </div>
       `;
@@ -1105,8 +1136,8 @@ async function compareNuevoClick(){
     const d1=data1[0]||{},d2=data2[0]||{};
     const m1=med1Data[0],m2=med2Data[0];
     
-    const f1=new Date(date1).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
-    const f2=new Date(date2).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
+    const f1=parseLocalDate(date1).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
+    const f2=parseLocalDate(date2).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
     
     let html=`
       <div class="card" style="margin-top:16px;">
@@ -1145,6 +1176,8 @@ async function compareNuevoClick(){
     `;
     
     if(m1&&m2){
+      const pesoT1=(m1.peso_grasa_kg||0)+(m1.peso_magro_kg||0);
+      const pesoT2=(m2.peso_grasa_kg||0)+(m2.peso_magro_kg||0);
       html+=`
           <tr>
             <td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Medidas Antropométricas</td>
@@ -1161,11 +1194,47 @@ async function compareNuevoClick(){
             <td>${m2.abdomen_cm}cm</td>
             <td style="color:${m2.abdomen_cm<m1.abdomen_cm?'var(--green)':'var(--red)'}">${(m2.abdomen_cm-m1.abdomen_cm).toFixed(1)}cm</td>
           </tr>
+          ${(m1.bicep_cm&&m2.bicep_cm)?`
+          <tr>
+            <td>Bícep</td>
+            <td>${m1.bicep_cm}cm</td>
+            <td>${m2.bicep_cm}cm</td>
+            <td style="color:${m2.bicep_cm>m1.bicep_cm?'var(--green)':'var(--red)'}">${(m2.bicep_cm-m1.bicep_cm).toFixed(1)}cm</td>
+          </tr>`:''}
+          ${(m1.muslo_cm&&m2.muslo_cm)?`
+          <tr>
+            <td>Muslo</td>
+            <td>${m1.muslo_cm}cm</td>
+            <td>${m2.muslo_cm}cm</td>
+            <td style="color:${m2.muslo_cm>m1.muslo_cm?'var(--green)':'var(--red)'}">${(m2.muslo_cm-m1.muslo_cm).toFixed(1)}cm</td>
+          </tr>`:''}
+          ${(m1.cadera_cm&&m2.cadera_cm)?`
+          <tr>
+            <td>Cadera</td>
+            <td>${m1.cadera_cm}cm</td>
+            <td>${m2.cadera_cm}cm</td>
+            <td style="color:${m2.cadera_cm<m1.cadera_cm?'var(--green)':'var(--red)'}">${(m2.cadera_cm-m1.cadera_cm).toFixed(1)}cm</td>
+          </tr>`:''}
+          <tr>
+            <td colspan="4" style="font-weight:600;padding:12px;background:rgba(160,125,224,.1);">Composición corporal</td>
+          </tr>
+          <tr>
+            <td>Peso total</td>
+            <td>${pesoT1.toFixed(1)}kg</td>
+            <td>${pesoT2.toFixed(1)}kg</td>
+            <td style="color:${pesoT2<pesoT1?'var(--green)':'var(--red)'}">${(pesoT2-pesoT1).toFixed(1)}kg</td>
+          </tr>
           <tr>
             <td>Grasa corporal</td>
             <td>${m1.grasa_pct.toFixed(1)}%</td>
             <td>${m2.grasa_pct.toFixed(1)}%</td>
             <td style="color:${m2.grasa_pct<m1.grasa_pct?'var(--green)':'var(--red)'}">${(m2.grasa_pct-m1.grasa_pct).toFixed(2)}%</td>
+          </tr>
+          <tr>
+            <td>Peso magro</td>
+            <td>${(m1.peso_magro_kg||0).toFixed(1)}kg</td>
+            <td>${(m2.peso_magro_kg||0).toFixed(1)}kg</td>
+            <td style="color:${(m2.peso_magro_kg||0)>(m1.peso_magro_kg||0)?'var(--green)':'var(--red)'}">${((m2.peso_magro_kg||0)-(m1.peso_magro_kg||0)).toFixed(1)}kg</td>
           </tr>
       `;
     }else if(m1||m2){
