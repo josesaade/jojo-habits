@@ -194,10 +194,10 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
         <span id="train-icon">○</span>
         <span id="train-label">No entrené hoy</span>
       </button>
-      <div class="input-row" style="margin-top:14px;">
-        <input class="num-input" type="number" id="calorias-quemadas" min="0" max="2000" step="50" placeholder="0" />
-        <span class="unit">kcal quemadas</span>
-      </div>
+      <button class="big-toggle" id="doblete-toggle" onclick="toggleDoblete()" style="margin-top:10px;">
+        <span id="doblete-icon">○</span>
+        <span id="doblete-label">Doblete (2 entrenos hoy)</span>
+      </button>
       <button class="save-btn" onclick="save('train')" style="margin-top:14px;">Guardar entrenamiento</button>
     </div>
 
@@ -414,13 +414,13 @@ main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1
           <input class="num-input" type="number" id="config-water" min="0" max="5000" step="100" placeholder="Agua" />
           <span class="unit">ml</span>
         </div>
-        <div class="input-row" style="margin-bottom:8px;">
-          <input class="num-input" type="number" id="config-calorias" min="0" max="2000" step="50" placeholder="Kcal" />
-          <span class="unit">q</span>
-        </div>
         <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
           <input type="checkbox" id="config-train" style="width:16px;height:16px;cursor:pointer;" />
           <span style="font-size:12px;color:var(--text-2);">Entrenamiento</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
+          <input type="checkbox" id="config-doblete" style="width:16px;height:16px;cursor:pointer;" />
+          <span style="font-size:12px;color:var(--text-2);">Doblete (2 entrenos)</span>
         </label>
         <button class="config-btn" onclick="updateDayData()">💾 Guardar cambios</button>
       </div>
@@ -452,7 +452,7 @@ const URL_BASE='https://zfilewmutwyoomitgnsp.supabase.co/rest/v1';
 const KEY='sb_publishable_fJ94dsmRK_qloX4KzkqCXw_J1oIXFka';
 const HEADERS={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'};
 const META_SLEEP=8,META_WATER=2500,ALTURA_CM=171,EDAD=29;
-let waterVal=0,trainDone=false,todayRecord=null;
+let waterVal=0,trainDone=false,dobleteDone=false,todayRecord=null;
 const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
 
 // Parsea un string "YYYY-MM-DD" como fecha LOCAL (evita el corrimiento de -1 día
@@ -486,7 +486,7 @@ async function init(){
         sueño_horas:Math.max(acc.sueño_horas||0,r.sueño_horas||0),
         entrenamiento:acc.entrenamiento||r.entrenamiento||false,
         agua_ml:Math.max(acc.agua_ml||0,r.agua_ml||0),
-        calorias_quemadas:Math.max(acc.calorias_quemadas||0,r.calorias_quemadas||0),
+        doblete:acc.doblete||r.doblete||false,
         cuello_cm:acc.cuello_cm||r.cuello_cm,
         abdomen_cm:acc.abdomen_cm||r.abdomen_cm,
         bicep_cm:acc.bicep_cm||r.bicep_cm,
@@ -502,7 +502,7 @@ async function init(){
 function prefillForm(r){
   if(r.sueño_horas){document.getElementById('sleep-val').value=r.sueño_horas;updateSleepBar(r.sueño_horas);}
   if(r.entrenamiento){trainDone=true;document.getElementById('train-toggle').classList.add('on');document.getElementById('train-icon').textContent='✓';document.getElementById('train-label').textContent='Entrené hoy';}
-  if(r.calorias_quemadas){document.getElementById('calorias-quemadas').value=r.calorias_quemadas;}
+  if(r.doblete){dobleteDone=true;trainDone=true;renderTrain();}
   if(r.agua_ml){waterVal=r.agua_ml;updateWaterDisplay();}
   updateChips(r);
 }
@@ -530,11 +530,23 @@ function updateSleepBar(v){
   document.getElementById('sleep-pct').textContent=pct+'%';
 }
 
-function toggleTrain(){
-  trainDone=!trainDone;
+function renderTrain(){
   document.getElementById('train-toggle').classList.toggle('on',trainDone);
   document.getElementById('train-icon').textContent=trainDone?'✓':'○';
   document.getElementById('train-label').textContent=trainDone?'Entrené hoy':'No entrené hoy';
+  document.getElementById('doblete-toggle').classList.toggle('on',dobleteDone);
+  document.getElementById('doblete-icon').textContent=dobleteDone?'✓':'○';
+  document.getElementById('doblete-label').textContent=dobleteDone?'Doblete: entrené 2 veces':'Doblete (2 entrenos hoy)';
+}
+function toggleTrain(){
+  trainDone=!trainDone;
+  if(!trainDone)dobleteDone=false;
+  renderTrain();
+}
+function toggleDoblete(){
+  dobleteDone=!dobleteDone;
+  if(dobleteDone)trainDone=true;
+  renderTrain();
 }
 
 async function save(type){
@@ -544,7 +556,7 @@ async function save(type){
   if(type==='sleep') payload.sueño_horas=parseFloat(document.getElementById('sleep-val').value)||0;
   if(type==='train'){
     payload.entrenamiento=trainDone;
-    payload.calorias_quemadas=parseInt(document.getElementById('calorias-quemadas').value)||0;
+    payload.doblete=dobleteDone;
   }
   if(type==='water') payload.agua_ml=waterVal;
   try{
@@ -1043,7 +1055,7 @@ async function loadCalendar(){
           sueño_horas:Math.max(acc.sueño_horas||0,d.sueño_horas||0),
           entrenamiento:acc.entrenamiento||d.entrenamiento||false,
           agua_ml:Math.max(acc.agua_ml||0,d.agua_ml||0),
-          calorias_quemadas:Math.max(acc.calorias_quemadas||0,d.calorias_quemadas||0)
+          doblete:acc.doblete||d.doblete||false
         };
       }
     });
@@ -1090,7 +1102,7 @@ async function selectDay(dateStr){
         sueño_horas:Math.max(acc.sueño_horas||0,r.sueño_horas||0),
         entrenamiento:acc.entrenamiento||r.entrenamiento||false,
         agua_ml:Math.max(acc.agua_ml||0,r.agua_ml||0),
-        calorias_quemadas:Math.max(acc.calorias_quemadas||0,r.calorias_quemadas||0)
+        doblete:acc.doblete||r.doblete||false
       }),{});
     }
     
@@ -1112,15 +1124,11 @@ async function selectDay(dateStr){
       </div>
       <div class="day-detail-stat">
         <span class="day-detail-label">⚡ Entrenamiento</span>
-        <span class="day-detail-val">${dayData.entrenamiento?'✓ Sí':'○ No'}</span>
+        <span class="day-detail-val">${dayData.entrenamiento?(dayData.doblete?'✓ Doblete (x2)':'✓ Sí'):'○ No'}</span>
       </div>
       <div class="day-detail-stat">
         <span class="day-detail-label">💧 Agua</span>
         <span class="day-detail-val">${dayData.agua_ml||0}ml</span>
-      </div>
-      <div class="day-detail-stat">
-        <span class="day-detail-label">⚡ Calorías quemadas</span>
-        <span class="day-detail-val">${dayData.calorias_quemadas||0}kcal</span>
       </div>
     `;
     
@@ -1188,8 +1196,8 @@ async function updateDayData(){
     fecha:fecha,
     sueño_horas:parseFloat(document.getElementById('config-sleep').value)||0,
     agua_ml:parseInt(document.getElementById('config-water').value)||0,
-    entrenamiento:document.getElementById('config-train').checked,
-    calorias_quemadas:parseInt(document.getElementById('config-calorias').value)||0
+    entrenamiento:document.getElementById('config-train').checked||document.getElementById('config-doblete').checked,
+    doblete:document.getElementById('config-doblete').checked
   };
   
   try{
@@ -1253,15 +1261,9 @@ async function compareNuevoClick(){
             <td style="color:${(d2.agua_ml||0)>(d1.agua_ml||0)?'var(--green)':'var(--red)'}">${((d2.agua_ml||0)-(d1.agua_ml||0))}ml</td>
           </tr>
           <tr>
-            <td>Kcal quemadas</td>
-            <td>${d1.calorias_quemadas||0}</td>
-            <td>${d2.calorias_quemadas||0}</td>
-            <td style="color:${(d2.calorias_quemadas||0)>(d1.calorias_quemadas||0)?'var(--green)':'var(--red)'}">${((d2.calorias_quemadas||0)-(d1.calorias_quemadas||0))}kcal</td>
-          </tr>
-          <tr>
             <td>Entrenamiento</td>
-            <td>${d1.entrenamiento?'✓':'○'}</td>
-            <td>${d2.entrenamiento?'✓':'○'}</td>
+            <td>${d1.entrenamiento?(d1.doblete?'✓✓':'✓'):'○'}</td>
+            <td>${d2.entrenamiento?(d2.doblete?'✓✓':'✓'):'○'}</td>
             <td>${d1.entrenamiento===d2.entrenamiento?'-':d2.entrenamiento?'✓':'○'}</td>
           </tr>
     `;
