@@ -4,456 +4,507 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#08080c">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ece6d8">
 <title>JoJo Habits</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+JP:wght@900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#08080c;--s1:#0f0f16;--s2:#16161f;--border:#2a2a3a;
-  --gold:#c8a84b;--gold-l:#e8c97a;--purple:#7c5cbf;--purple-l:#a07de0;
-  --teal-l:#5cc4b2;--red:#c94040;--green:#4db875;
-  --text:#ede8e0;--text-2:#8a8578;--text-3:#42403a;--r:14px;--r-sm:8px;
+:root{
+  --bg:#ece6d8;--paper:#f3eee3;--card:#fff;--ink:#111;--purple:#7a2bd8;
+  --text:#111;--text-2:#4a4640;--text-3:#8a857a;--border:#111;--red:#d33a22;--green:#7a2bd8;
+  --s1:#fff;--s2:#f3eee3;--gold:#7a2bd8;--gold-l:#7a2bd8;--purple-l:#7a2bd8;--teal-l:#7a2bd8;
+  --b:3px solid #111;--sh:6px 6px 0 #111;
+  --dotp:radial-gradient(rgba(17,17,17,.5) 1.2px,transparent 1.5px) 0 0/6px 6px,#7a2bd8;
+  --dotc:radial-gradient(rgba(17,17,17,.5) 1.1px,transparent 1.4px) 0 0/7px 7px,#f6f2e8;
+  --display:'Anton','Impact','Arial Narrow',sans-serif;
+  --body:'Space Grotesk',system-ui,-apple-system,sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:40px;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(124,92,191,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 80%,rgba(200,168,75,.06) 0%,transparent 60%);pointer-events:none;}
-header{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:calc(16px + env(safe-area-inset-top)) 20px 0;}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.brand{display:flex;align-items:center;gap:10px;}
-.brand-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--purple),var(--gold));display:flex;align-items:center;justify-content:center;font-size:16px;}
-.brand-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.1em;background:linear-gradient(90deg,var(--gold-l),var(--purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.header-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-2);text-align:right;line-height:1.7;}
-.tabs{display:flex;gap:4px;}
-.tab{flex:1;background:none;border:none;font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--text-3);padding:10px 2px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap;}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
-main{max-width:480px;margin:0 auto;padding:28px 20px;position:relative;z-index:1;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{background:var(--bg);}
+body{font-family:var(--body);background-color:var(--bg);background-image:radial-gradient(rgba(17,17,17,.2) 1.1px,transparent 1.4px);background-size:7px 7px;color:var(--ink);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+button{font-family:var(--body);color:inherit;}
+input{font-family:var(--body);color:var(--ink);}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+main{max-width:480px;margin:0 auto;padding:calc(26px + env(safe-area-inset-top)) 20px calc(140px + env(safe-area-inset-bottom));position:relative;}
 .panel{display:none;}.panel.active{display:block;}
-.today-badge{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;}
-.today-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);}
-.today-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);}
-.today-chips{display:flex;gap:6px;}
-.chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;}
-.chip.ok{background:rgba(92,196,178,.15);color:var(--teal-l);}
-.chip.no{background:rgba(66,64,58,.3);color:var(--text-3);}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:22px 20px;margin-bottom:14px;}
-.card-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
-.card-title .icon{font-size:18px;}
-.card-subtitle{font-size:10px;color:var(--text-2);margin-bottom:12px;line-height:1.5;}
+
+/* ---------- Tipografía y encabezados ---------- */
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;margin-bottom:2px;}
+.display{font-family:var(--display);font-weight:400;text-transform:uppercase;line-height:.88;letter-spacing:-.005em;}
+.h-xl{font-size:clamp(88px,27vw,116px);}
+.h-lg{font-size:clamp(58px,18vw,78px);}
+.h-md{font-size:clamp(48px,14.5vw,62px);}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;position:relative;}
+.hero{position:relative;margin-bottom:22px;}
+.sfx{position:absolute;font-family:'Noto Sans JP',sans-serif;font-weight:900;color:var(--purple);pointer-events:none;white-space:nowrap;z-index:3;line-height:1;}
+.sfx span{display:inline-block;}
+.sfx span:nth-child(1){transform:rotate(-10deg);}
+.sfx span:nth-child(2){transform:translateY(10px) rotate(4deg);}
+.sfx span:nth-child(3){transform:translateY(22px) rotate(-6deg);}
+.sfx.hoy{right:-18px;top:62px;font-size:60px;}
+.sfx.stats{right:0;top:4px;font-size:52px;}
+.pills{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.pill{font-weight:700;letter-spacing:.14em;font-size:13px;text-transform:uppercase;padding:9px 14px;border:3px solid var(--ink);background:transparent;}
+.pill.solid{background:var(--ink);color:var(--paper);}
+.section-h{font-family:var(--display);font-weight:400;font-size:36px;text-transform:uppercase;margin:34px 0 16px;line-height:1;}
+
+/* ---------- Tarjetas ---------- */
+.card{background:var(--card);border:var(--b);box-shadow:var(--sh);padding:20px 18px;margin-bottom:22px;position:relative;}
+.card.cream{background:var(--paper);}
+.card-title{font-family:var(--display);font-weight:400;font-size:28px;text-transform:uppercase;letter-spacing:.005em;line-height:1;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-title .icon{display:none;}
+.card-subtitle{font-size:12px;color:var(--text-2);margin:-8px 0 14px;line-height:1.5;font-weight:500;}
+.k{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.foot{font-size:11px;font-weight:500;color:var(--text-2);margin-top:14px;line-height:1.5;}
+.acc{color:var(--purple);}
+.empty-note{text-align:center;font-weight:700;letter-spacing:.06em;font-size:14px;padding:34px 20px;text-transform:uppercase;}
+
+/* ---------- Hoy ---------- */
+.hoy-sleep{transform:rotate(-.5deg);padding:22px 20px 20px;}
+.hoy-sleep .row-top{display:flex;justify-content:space-between;align-items:baseline;}
+.meta-tag{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.sleep-line{display:flex;align-items:baseline;gap:10px;margin:6px 0 12px;}
+.big-num{font-family:var(--display);font-size:84px;line-height:1;width:122px;border:0;background:transparent;outline:none;padding:0;color:var(--ink);border-radius:0;}
+.big-num::placeholder{color:#c9c3b4;}
+.big-unit{font-size:20px;font-weight:700;}
+.prog-track{height:20px;border:3px solid var(--ink);background:#fff;overflow:hidden;}
+.prog-fill{height:100%;background:var(--dotp);transition:width .5s cubic-bezier(.4,0,.2,1);width:0;}
+.tiles-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;margin-bottom:22px;}
+.tile{padding:18px 16px;border:var(--b);box-shadow:var(--sh);}
+.tile-title{font-family:var(--display);font-size:26px;text-transform:uppercase;line-height:1;margin-bottom:10px;}
+.tile-water{background:var(--ink);color:var(--paper);transform:rotate(-.8deg);display:flex;flex-direction:column;}
+.water-num{font-family:var(--display);font-size:56px;line-height:1;display:flex;align-items:baseline;gap:6px;}
+.water-num small{font-family:var(--display);font-size:22px;}
+.tile-water .prog-track{background:var(--ink);border-color:var(--paper);height:14px;margin:12px 0;}
+.quick-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.quick-btn{background:var(--paper);border:0;color:var(--ink);font-weight:700;font-size:16px;padding:13px 4px;cursor:pointer;transform:rotate(-1.2deg);}
+.quick-btn:nth-child(2n){transform:rotate(1.2deg);}
+.quick-btn:active{transform:scale(.95);}
+.mini-link{margin-top:10px;background:none;border:0;color:var(--paper);opacity:.7;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;text-align:left;padding:4px 0;}
+.tile-train{background:#fff;color:var(--ink);transform:rotate(1deg);display:flex;flex-direction:column;}
+.tile-train.on{background:var(--purple);color:var(--paper);}
+.tile-main{background:none;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;display:flex;flex-direction:column;flex:1;padding:0;}
+.check{flex:1;display:flex;align-items:center;min-height:70px;}
+.check svg{width:70px;height:70px;opacity:.13;}
+.tile-train.on .check svg{opacity:1;}
+.tile-status{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.doblete-btn{margin-top:12px;border:3px solid currentColor;background:transparent;color:inherit;font-size:12px;font-weight:700;letter-spacing:.14em;padding:9px 6px;cursor:pointer;text-transform:uppercase;width:100%;}
+.doblete-btn.on{background:var(--paper);color:var(--ink);border-color:var(--ink);}
+.next-card{border:3px dashed var(--ink);background:rgba(255,255,255,.7);padding:26px 22px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:18px;cursor:pointer;width:100%;text-align:left;}
+.next-card .arrow{font-size:26px;}
+
+/* ---------- Medidor ---------- */
+.weight-tag{background:var(--ink);color:var(--paper);padding:12px 16px 10px;transform:rotate(-2deg);text-align:right;min-width:150px;box-shadow:4px 4px 0 rgba(17,17,17,.25);}
+.weight-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;}
+.weight-input{font-family:var(--display);font-size:46px;line-height:1;width:112px;text-align:right;background:transparent;border:0;outline:none;color:var(--paper);padding:0;border-radius:0;}
+.weight-input::placeholder{color:#6b665c;}
+.weight-unit{font-family:var(--display);font-size:20px;}
+.weight-delta{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+.body-card{padding:14px 12px 16px;}
+.body-cols{display:grid;grid-template-columns:1fr 118px 1fr;gap:6px;align-items:start;}
+.figure{width:118px;height:auto;display:block;margin-top:6px;}
+.mcol{display:flex;flex-direction:column;}
+.mcol.pad{padding-top:50px;}
+.mgap1{margin-top:24px;}.mgap2{margin-top:20px;}
+.mcard{display:block;background:var(--paper);border:3px solid var(--ink);padding:7px 8px 8px;cursor:text;min-width:0;}
+.mcard + .mcard{border-top-width:0;}
+.mcard.single{border-top-width:3px;}
+.mlabel{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1.2;margin-bottom:2px;}
+.mrow{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;}
+.mcard input,.mini input{font-family:var(--display);font-size:26px;line-height:1.05;width:62%;background:transparent;border:0;outline:none;padding:0;border-radius:0;color:var(--ink);}
+.mcard input::placeholder,.mini input::placeholder{color:#b8b2a2;}
+.mdelta{font-size:11px;font-weight:700;color:var(--ink);}
+.mdelta.up{color:var(--purple);}
+.mcard.empty{background:var(--purple);color:var(--paper);}
+.mcard.empty .mlabel{color:var(--paper);}
+.mcard.empty input{width:100%;color:var(--paper);}
+.mcard.empty input::placeholder{color:var(--paper);opacity:1;}
+.mcard.empty .mdelta{color:var(--paper);opacity:.85;font-weight:500;}
+.mini-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:18px;}
+.mini{display:block;background:#fff;border:3px solid var(--ink);padding:7px 4px 6px;text-align:center;cursor:text;min-width:0;}
+.mini .mlabel{font-size:9px;letter-spacing:.03em;}
+.mini input{width:100%;text-align:center;font-size:21px;}
+.mini .mdelta{display:block;font-size:10px;min-height:12px;}
+.mini.empty{background:var(--purple);color:var(--paper);}
+.mini.empty .mlabel,.mini.empty input,.mini.empty .mdelta{color:var(--paper);}
+.mini.empty input::placeholder{color:var(--paper);opacity:1;}
+.med-count{display:flex;justify-content:space-between;font-size:13px;font-weight:500;color:var(--text-2);margin-bottom:14px;}
+
+/* ---------- Botones ---------- */
+.save-btn,.config-btn{width:100%;padding:16px;background:var(--ink);color:var(--paper);border:3px solid var(--ink);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;box-shadow:5px 5px 0 var(--purple);margin-bottom:12px;transition:transform .1s,box-shadow .1s;}
+.save-btn:active,.config-btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--purple);}
+.save-btn:disabled{opacity:.4;}
+.reset-btn,.link-btn{background:transparent;border:3px solid var(--ink);color:var(--ink);padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;}
+.link-btn{width:100%;padding:12px;margin-bottom:12px;}
+.sq-btn{width:54px;height:54px;background:#fff;border:3px solid var(--ink);font-size:24px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink);}
+.sq-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.nav-btns{display:flex;gap:12px;margin-top:6px;}
+
+/* ---------- Stats ---------- */
+.stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+.stile{padding:16px 16px 14px;border:var(--b);box-shadow:var(--sh);}
+.stile.black{background:var(--ink);color:var(--paper);transform:rotate(-.8deg);}
+.stile.white{background:#fff;transform:rotate(.6deg);}
+.stile .big{white-space:nowrap;font-family:var(--display);font-size:52px;line-height:1.05;margin:6px 0 4px;}
+.stile .sub{font-size:13px;font-weight:500;}
+.comp-bar{display:flex;border:3px solid var(--ink);height:40px;margin-bottom:16px;background:var(--ink);}
+.comp-lean{background:var(--ink);color:var(--paper);display:flex;align-items:center;padding-left:12px;font-size:12px;font-weight:700;letter-spacing:.06em;white-space:nowrap;overflow:hidden;}
+.comp-fat{background:var(--dotp);}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.trio .v{font-family:var(--display);font-size:32px;line-height:1.1;margin-top:4px;}
+.chart-wrap{position:relative;}
+.chart{position:relative;height:150px;display:flex;gap:10px;align-items:flex-end;border-bottom:3px solid var(--ink);padding:0 2px;}
+.goal-line{position:absolute;left:0;right:0;bottom:80%;border-top:3px dashed var(--ink);pointer-events:none;}
+.bar{flex:1;border:3px solid var(--ink);border-bottom:0;background:var(--dotc);min-height:0;}
+.bar.goal{background:var(--dotp);}
+.bar.none{border:0;height:0 !important;}
+.bar-lbls{display:flex;gap:10px;padding:0 2px;margin-top:10px;}
+.bar-lbls div{flex:1;text-align:center;font-weight:700;font-size:15px;}
+.mt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.mt{background:var(--paper);border:3px solid var(--ink);padding:8px 6px;text-align:center;}
+.mt .k{font-size:9px;letter-spacing:.06em;}
+.mt .v{font-family:var(--display);font-size:24px;line-height:1.1;margin-top:3px;}
+
+/* ---------- Análisis ---------- */
+.ratio-card{background:#fff;border:3px solid var(--ink);box-shadow:0 0 0 6px var(--purple),0 0 0 9px var(--ink),12px 12px 0 9px var(--ink);margin:14px 10px 30px;padding:16px 18px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;}
+.ratio-card .num{font-family:var(--display);font-size:78px;line-height:1;margin-top:4px;}
+.ratio-side{text-align:right;font-weight:700;font-size:16px;line-height:1.5;padding-bottom:8px;}
+.bubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:34px 28px 34px 34px;padding:20px 22px 18px;margin-bottom:30px;transform:rotate(-.4deg);}
+.bubble.alt{transform:rotate(.4deg);border-radius:34px 34px 28px 34px;}
+.bubble::after{content:'';position:absolute;bottom:-17px;left:84px;width:28px;height:28px;background:#fff;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg) skew(12deg,12deg);}
+.bubble.alt::after{left:auto;right:70px;}
+.bubble h3{font-family:var(--display);font-weight:400;font-size:30px;text-transform:uppercase;line-height:1;margin-bottom:8px;}
+.bubble p{font-size:17px;line-height:1.45;font-weight:500;}
+.mission{background:var(--ink);color:var(--paper);padding:18px 18px 20px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
+.mission .bang{font-family:var(--display);font-size:56px;line-height:.9;color:var(--purple);}
+.mission .k{letter-spacing:.2em;margin-bottom:6px;}
+.mission p{font-size:19px;line-height:1.35;font-weight:500;}
+.comp-visual{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.comp-item{background:var(--paper);border:3px solid var(--ink);padding:12px 8px;text-align:center;}
+.comp-item-val{font-family:var(--display);font-size:30px;line-height:1.1;margin-bottom:4px;}
+.comp-item-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.comp-item-sub{font-size:10px;font-weight:500;color:var(--text-2);margin-top:4px;}
+.body-type-label{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;}
+.body-type-val{font-family:var(--display);font-size:42px;line-height:1;text-transform:uppercase;margin-bottom:10px;}
+.body-type-desc{font-size:14px;line-height:1.6;font-weight:500;}
+.rec-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:14px;font-weight:500;}
+.rec-icon{width:38px;height:38px;background:var(--paper);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.rec-text{line-height:1.45;}
+.goal-progress{margin-bottom:14px;}
+.goal-label{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;}
+.goal-bar{height:16px;border:3px solid var(--ink);background:#fff;overflow:hidden;}
+.goal-fill{height:100%;background:var(--dotp);transition:width .3s;}
+.goal-fill.negative{background:var(--ink);}
+
+/* ---------- Mes ---------- */
+.cal-week,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;}
+.cal-grid>div{min-width:0;}
+.cal-week{margin-bottom:10px;}
+.cal-week div{text-align:center;font-weight:700;font-size:14px;}
+.cal-day{aspect-ratio:1/.92;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;cursor:pointer;border:3px solid transparent;}
+.cal-day.blank{cursor:default;}
+.cal-day.s3{background:var(--ink);color:var(--paper);}
+.cal-day.s2{background:var(--purple);color:var(--paper);border-color:var(--ink);}
+.cal-day.s1{background:#fff;color:var(--ink);border-color:var(--ink);}
+.cal-day.s0{background:#fff;color:#aaa49a;border-color:#c9c3b4;}
+.cal-day.future{background:transparent;color:var(--ink);border:3px dashed #bdb7a8;cursor:pointer;}
+.cal-day.today{text-decoration:underline;text-underline-offset:3px;}
+.cal-day.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ink);}
+.cal-legend{display:flex;align-items:center;gap:14px;margin-top:18px;font-weight:700;font-size:14px;flex-wrap:wrap;}
+.cal-legend .sw{display:inline-block;width:20px;height:20px;border:3px solid var(--ink);vertical-align:-4px;margin-right:6px;}
+.cal-legend .push{margin-left:auto;font-weight:500;}
+.cmp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:14px;}
+.cmp-head .card-title{margin-bottom:0;}
+.cmp-range{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:right;}
+.cmp-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 18px;}
+.cmp-tile{background:#fff;border:3px solid var(--ink);padding:10px 12px;}
+.cmp-tile .k{font-size:11px;letter-spacing:.04em;font-weight:500;}
+.cmp-tile .v{font-family:var(--display);font-size:34px;line-height:1.15;margin-top:2px;}
+.cmp-tile .v.pos{color:var(--purple);}
+.table-scroll{overflow-x:auto;margin-top:6px;}
+.comparison-table{width:100%;border-collapse:collapse;font-size:12px;font-weight:500;background:#fff;}
+.comparison-table th{background:var(--ink);color:var(--paper);padding:9px 8px;text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:10px;}
+.comparison-table td{padding:9px 8px;border:2px solid var(--ink);}
+.comparison-table td[colspan]{background:var(--ink) !important;color:var(--paper);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:10px;}
+.date-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 14px;}
+.date-pair>div{min-width:0;}
+.date-pair .config-date-input{min-width:0;max-width:100%;font-size:13px;padding:10px 6px;}
+.date-pair .k{margin-bottom:4px;font-size:10px;}
+.config-date-input{width:100%;background:#fff;border:3px solid var(--ink);color:var(--ink);padding:10px;font-size:14px;font-weight:700;margin-bottom:10px;border-radius:0;min-height:46px;}
+.config-section{border-top:3px solid var(--ink);padding-top:16px;margin-top:6px;}
+.config-section:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.config-title{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;}
 .input-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
-.num-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;padding:12px 16px;outline:none;text-align:center;transition:border-color .15s;-webkit-appearance:none;}
-.num-input:focus{border-color:var(--gold);}
-.unit{font-size:11px;color:var(--text-2);font-weight:500;margin-left:4px;white-space:nowrap;}
-.water-total{text-align:center;font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:var(--teal-l);margin-bottom:6px;}
-.water-total span{font-size:15px;color:var(--text-2);}
-.quick-row{display:flex;gap:8px;margin-bottom:14px;}
-.quick-btn{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--teal-l);font-size:13px;font-weight:600;padding:14px 4px;cursor:pointer;transition:background .15s,border-color .15s;font-family:'JetBrains Mono',monospace;}
-.quick-btn:hover{background:rgba(92,196,178,.1);border-color:var(--teal-l);}
-.quick-btn:active{transform:scale(.97);}
-.big-toggle{width:100%;padding:16px;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-2);cursor:pointer;transition:background .2s,border-color .2s,color .2s;display:flex;align-items:center;justify-content:center;gap:10px;}
-.big-toggle.on{background:rgba(92,196,178,.12);border-color:var(--teal-l);color:var(--teal-l);}
-.save-btn{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:opacity .2s,transform .1s;}
-.save-btn:hover{opacity:.9;}.save-btn:active{transform:scale(.98);}.save-btn:disabled{opacity:.35;cursor:not-allowed;}
-.reset-btn{width:100%;margin-top:8px;padding:8px;background:none;border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text-3);font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color .15s,color .15s;}
-.reset-btn:hover{border-color:var(--red);color:var(--red);}
-.prog-wrap{margin-top:12px;}
-.prog-label{font-size:10px;color:var(--text-2);margin-bottom:5px;display:flex;justify-content:space-between;}
-.prog-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.stat-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
-.stat-box-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;}
-.stat-box-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;}
-.stat-box-val.green{color:var(--green);}.stat-box-val.yellow{color:var(--gold-l);}.stat-box-val.red{color:var(--red);}.stat-box-val.normal{color:var(--green);}
-.stat-box-sub{font-size:10px;color:var(--text-2);margin-top:6px;}
-.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;margin-top:4px;}
-.badge.normal{background:rgba(77,184,117,.15);color:var(--green);}
-.badge.sobrepeso{background:rgba(200,168,75,.15);color:var(--gold-l);}
-.badge.obesidad{background:rgba(201,64,64,.15);color:var(--red);}
-.badge.bajo{background:rgba(138,133,120,.15);color:var(--text-2);}
-.badge.alto{background:rgba(200,168,75,.15);color:var(--gold-l);}
-.badge.atletico{background:rgba(77,184,117,.15);color:var(--green);}
-.detail-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;font-size:12px;color:var(--text-2);line-height:2;}
-.historial-item{background:var(--s2);padding:12px;border-radius:8px;margin-bottom:8px;font-size:11px;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);}
-.historial-fecha{color:var(--text);font-weight:600;margin-bottom:4px;}
-.historial-data{color:var(--text-2);line-height:1.6;}
-.historial-data strong{color:var(--text);}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s;z-index:999;white-space:nowrap;}
+.num-input{flex:1;background:#fff;border:3px solid var(--ink);border-radius:0;color:var(--ink);font-family:var(--display);font-size:24px;padding:8px 12px;outline:none;text-align:center;min-width:0;}
+.unit{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.chk{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;font-size:14px;font-weight:700;}
+.chk input{width:20px;height:20px;accent-color:#7a2bd8;cursor:pointer;}
+.day-detail-fecha{font-family:var(--display);font-size:26px;text-transform:uppercase;line-height:1.05;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.day-detail-stat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:2px solid var(--ink);font-size:14px;}
+.day-detail-stat:last-child{border-bottom:0;}
+.day-detail-label{font-weight:500;color:var(--text-2);}
+.day-detail-val{font-weight:700;color:var(--ink);}
+.historial-item{background:var(--paper);padding:10px 12px;border:3px solid var(--ink);margin-bottom:8px;font-size:12px;}
+.historial-fecha{font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+.historial-data{color:var(--text-2);line-height:1.6;font-weight:500;}
+.historial-data strong{color:var(--ink);}
+
+/* ---------- Navegación inferior ---------- */
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(480px,calc(100% - 40px));display:flex;background:var(--paper);border:var(--b);box-shadow:5px 5px 0 var(--ink);z-index:60;}
+.tab{flex:1;background:transparent;border:0;border-right:3px solid var(--ink);padding:19px 2px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;color:var(--ink);}
+.tab:last-child{border-right:0;}
+.tab.active{background:var(--ink);color:var(--paper);}
+
+.toast{position:fixed;bottom:calc(112px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--purple);padding:11px 18px;font-size:13px;font-weight:700;letter-spacing:.06em;opacity:0;pointer-events:none;transition:opacity .25s;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:998;display:none;align-items:flex-end;padding:0;}
-.modal-overlay.show{display:flex;}
-.modal-content{background:var(--bg);width:100%;max-height:90dvh;border-radius:20px 20px 0 0;overflow-y:auto;padding:24px 20px;border:1px solid var(--border);}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-.modal-close{background:none;border:none;color:var(--text-2);font-size:24px;cursor:pointer;padding:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;}
-.modal-close:hover{color:var(--text);}
-.comp-visual{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.comp-item{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;}
-.comp-item-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;margin-bottom:4px;}
-.comp-item-label{font-size:10px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;}
-.comp-item-sub{font-size:10px;color:var(--text-3);margin-top:6px;}
-.body-type-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;text-align:center;}
-.body-type-label{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
-.body-type-val{font-family:'Cinzel',serif;font-size:22px;font-weight:600;margin-bottom:12px;}
-.body-type-desc{font-size:11px;color:var(--text-2);line-height:1.8;}
-.recommendations{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;}
-.rec-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.rec-item{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:12px;color:var(--text-2);}
-.rec-icon{width:32px;height:32px;background:var(--s2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.rec-text{line-height:1.5;}
-.goal-progress{margin-bottom:12px;}
-.goal-label{font-size:11px;color:var(--text-2);margin-bottom:6px;display:flex;justify-content:space-between;}
-.goal-bar{height:8px;background:var(--s2);border-radius:4px;overflow:hidden;}
-.goal-fill{height:100%;border-radius:4px;transition:width .3s;background:var(--teal-l);}
-.goal-fill.negative{background:var(--red);}
-.goal-fill.positive{background:var(--green);}
-.close-modal-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;margin-top:12px;}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
-.calendar-day{aspect-ratio:1;background:var(--s2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;font-family:'JetBrains Mono';font-weight:600;transition:all .15s;position:relative;}
-.calendar-day:hover{border-color:var(--gold);background:rgba(200,168,75,.1);}
-.calendar-day.ok{border-color:var(--green);background:rgba(77,184,117,.2);color:var(--green);}
-.calendar-day.partial{border-color:var(--gold-l);background:rgba(232,201,122,.15);color:var(--gold-l);}
-.calendar-day.empty{border-color:var(--border);background:var(--s2);color:var(--text-3);}
-.calendar-day.selected{border-color:var(--purple-l);background:rgba(160,125,224,.25);box-shadow:0 0 10px rgba(160,125,224,.3);}
-.day-detail{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
-.day-detail-fecha{font-family:'Cinzel',serif;font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.day-detail-stat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.day-detail-stat:last-child{border-bottom:none;}
-.day-detail-label{color:var(--text-2);}
-.day-detail-val{font-family:'JetBrains Mono';font-weight:600;color:var(--text);}
-.comparison-table{width:100%;border-collapse:collapse;font-size:11px;}
-.comparison-table th{background:var(--s2);color:var(--text-2);padding:10px;text-align:left;border:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
-.comparison-table td{padding:10px;border:1px solid var(--border);}
-.comparison-table tr:nth-child(even){background:rgba(22,22,31,.5);}
-.comparison-table tr:hover{background:rgba(124,92,191,.1);}
-.config-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
-.config-title{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:600;}
-.config-date-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:10px;font-size:12px;margin-bottom:8px;}
-.config-btn{width:100%;padding:10px;background:linear-gradient(135deg,var(--purple),var(--gold));color:#08080c;border:none;border-radius:var(--r-sm);font-weight:600;cursor:pointer;font-size:12px;margin-bottom:8px;}
-.config-btn:hover{opacity:.9;}
-.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.measure-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
-.measure-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.measure-card-label{font-size:11px;color:var(--text-2);font-weight:600;}
-.measure-card-icon{font-size:20px;opacity:.85;}
-.measure-card input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;padding:8px 10px;outline:none;text-align:center;-webkit-appearance:none;}
-.measure-card input:focus{border-color:var(--gold);}
-.measure-section-title{font-size:10px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;}
-.measure-section-title:first-child{margin-top:0;}
 </style>
 </head>
 <body>
-<header>
-  <div class="header-top">
-    <div class="brand">
-      <div class="brand-icon">⚡</div>
-      <div class="brand-name">JoJo Habits</div>
-    </div>
-    <div class="header-date" id="hdr-date">—</div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('habits')">Hábitos</button>
-    <button class="tab" onclick="switchTab('medidor')">Medidor</button>
-    <button class="tab" onclick="switchTab('stats')">Stats</button>
-    <button class="tab" onclick="switchTab('analisis')">Análisis</button>
-    <button class="tab" onclick="switchTab('historial')">📅</button>
-  </div>
-</header>
 
 <main>
 
-  <!-- HÁBITOS -->
+  <!-- HOY -->
   <div class="panel active" id="panel-habits">
-    <div class="today-badge">
-      <div>
-        <div class="today-label">Hoy</div>
-        <div class="today-val" id="today-date">—</div>
+    <div class="hero">
+      <div class="eyebrow" id="eyebrow-habits">—</div>
+      <h1 class="display h-xl">Hoy</h1>
+      <div class="pills">
+        <span class="pill solid" id="pill-racha">RACHA 0 DÍAS</span>
+        <span class="pill" id="pill-habits">0 / 3 HÁBITOS</span>
       </div>
-      <div class="today-chips" id="today-chips">
-        <span class="chip no">🌙</span>
-        <span class="chip no">⚡</span>
-        <span class="chip no">💧</span>
+      <div class="sfx hoy" aria-hidden="true"><span>ゴ</span><span>ゴ</span><span>ゴ</span></div>
+    </div>
+
+    <div class="card hoy-sleep">
+      <div class="row-top">
+        <h2 class="card-title" style="margin-bottom:0;">Sueño</h2>
+        <span class="meta-tag">Meta 8h</span>
+      </div>
+      <div class="sleep-line">
+        <input class="big-num" type="number" inputmode="decimal" id="sleep-val" min="0" max="24" step="0.1" placeholder="0.0" aria-label="Horas de sueño" />
+        <span class="big-unit">horas</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="sleep-bar"></div></div>
+    </div>
+
+    <div class="tiles-2">
+      <div class="tile tile-water">
+        <div class="tile-title">Agua</div>
+        <div class="water-num"><span id="water-display">0</span><small>/ 2.5 L</small></div>
+        <div class="prog-track"><div class="prog-fill" id="water-bar"></div></div>
+        <div class="quick-row">
+          <button class="quick-btn" onclick="addWater(730)">+730</button>
+          <button class="quick-btn" onclick="addWater(880)">+880</button>
+          <button class="quick-btn" onclick="addWater(950)">+950</button>
+          <button class="quick-btn" onclick="addWater(1100)">+1100</button>
+        </div>
+        <button class="mini-link" onclick="resetWater()">↺ Reiniciar a 0</button>
+      </div>
+
+      <div class="tile tile-train" id="train-tile">
+        <button class="tile-main" id="train-toggle" onclick="toggleTrain()" aria-label="Entrené hoy">
+          <div class="tile-title">Entreno</div>
+          <div class="check">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 26 L19 40 L44 8" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter"/></svg>
+          </div>
+          <div class="tile-status" id="train-label">SIN ENTRENO</div>
+        </button>
+        <button class="doblete-btn" id="doblete-toggle" onclick="toggleDoblete()">
+          <span id="doblete-icon">+</span> <span id="doblete-label">DOBLETE</span>
+        </button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span class="icon">🌙</span> Sueño</div>
-      <div class="input-row">
-        <input class="num-input" type="number" id="sleep-val" min="0" max="24" step="0.5" placeholder="0" />
-        <span class="unit">horas</span>
-      </div>
-      <div class="prog-wrap">
-        <div class="prog-label"><span>Meta: 8h</span><span id="sleep-pct">0%</span></div>
-        <div class="prog-track"><div class="prog-fill" id="sleep-bar" style="width:0%;background:var(--purple-l);"></div></div>
-      </div>
-      <button class="save-btn" onclick="save('sleep')">Guardar sueño</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span class="icon">⚡</span> Entrenamiento</div>
-      <button class="big-toggle" id="train-toggle" onclick="toggleTrain()">
-        <span id="train-icon">○</span>
-        <span id="train-label">No entrené hoy</span>
-      </button>
-      <button class="big-toggle" id="doblete-toggle" onclick="toggleDoblete()" style="margin-top:10px;">
-        <span id="doblete-icon">○</span>
-        <span id="doblete-label">Doblete (2 entrenos hoy)</span>
-      </button>
-      <button class="save-btn" onclick="save('train')" style="margin-top:14px;">Guardar entrenamiento</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span class="icon">💧</span> Agua</div>
-      <div class="water-total"><span id="water-display">0</span><span> ml</span></div>
-      <div class="prog-wrap" style="margin-bottom:16px;">
-        <div class="prog-label"><span>Meta: 2500ml</span><span id="water-pct">0%</span></div>
-        <div class="prog-track"><div class="prog-fill" id="water-bar" style="width:0%;background:var(--teal-l);"></div></div>
-      </div>
-      <div class="quick-row">
-        <button class="quick-btn" onclick="addWater(730)">+730</button>
-        <button class="quick-btn" onclick="addWater(880)">+880</button>
-        <button class="quick-btn" onclick="addWater(950)">+950</button>
-        <button class="quick-btn" onclick="addWater(1100)">+1100</button>
-      </div>
-      <button class="save-btn" onclick="save('water')">Guardar agua</button>
-      <button class="reset-btn" onclick="resetWater()">Reiniciar a 0</button>
-    </div>
+    <button class="next-card" id="next-card" onclick="irProximo()">
+      <span id="next-text">—</span><span class="arrow">→</span>
+    </button>
   </div>
 
   <!-- MEDIDOR -->
   <div class="panel" id="panel-medidor">
-    <div class="card">
-      <div class="card-title"><span class="icon">⚖️</span> Peso</div>
-      <div class="input-row" style="margin-bottom:0;">
-        <input class="num-input" type="number" id="peso-medidor" min="30" max="300" step="0.1" placeholder="0.0" />
-        <span class="unit">kg</span>
+    <div class="page-head">
+      <div>
+        <div class="eyebrow" id="eyebrow-medidor">—</div>
+        <h1 class="display h-md">Medidor</h1>
+      </div>
+      <div class="weight-tag">
+        <div class="weight-row">
+          <input class="weight-input" type="number" inputmode="decimal" id="peso-medidor" min="30" max="300" step="0.1" placeholder="0.0" aria-label="Peso en kilos" />
+          <span class="weight-unit">KG</span>
+        </div>
+        <div class="weight-delta" id="peso-delta">—</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span class="icon">📏</span> Medidas corporales</div>
-      <div class="card-subtitle">Toca cada tarjeta e ingresa la circunferencia en cm</div>
+    <div class="card body-card">
+      <div class="body-cols">
+        <div class="mcol pad">
+          <label class="mcard empty"><span class="mlabel">Brazo izq.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-brazo-izq" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard empty"><span class="mlabel">Antebr. izq.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-antebrazo-izq" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard single empty mgap1"><span class="mlabel">Muslo izq.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-muslo-izq" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard single empty mgap2"><span class="mlabel">Pantorr. izq.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-pantorrilla-izq" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+        </div>
 
-      <div class="measure-grid">
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Cuello</span><span class="measure-card-icon">🧍</span></div>
-          <input type="number" step="0.1" id="m-cuello" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Hombro</span><span class="measure-card-icon">🏋️</span></div>
-          <input type="number" step="0.1" id="m-hombro" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Pecho</span><span class="measure-card-icon">🫁</span></div>
-          <input type="number" step="0.1" id="m-pecho" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Cintura/Abdomen</span><span class="measure-card-icon">🎯</span></div>
-          <input type="number" step="0.1" id="m-abdomen" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Brazo Izq.</span><span class="measure-card-icon">💪</span></div>
-          <input type="number" step="0.1" id="m-brazo-izq" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Brazo Der.</span><span class="measure-card-icon">💪</span></div>
-          <input type="number" step="0.1" id="m-brazo-der" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Antebrazo Izq.</span><span class="measure-card-icon">🤜</span></div>
-          <input type="number" step="0.1" id="m-antebrazo-izq" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Antebrazo Der.</span><span class="measure-card-icon">🤛</span></div>
-          <input type="number" step="0.1" id="m-antebrazo-der" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Muslo Izq.</span><span class="measure-card-icon">🦵</span></div>
-          <input type="number" step="0.1" id="m-muslo-izq" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Muslo Der.</span><span class="measure-card-icon">🦵</span></div>
-          <input type="number" step="0.1" id="m-muslo-der" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Pantorrilla Izq.</span><span class="measure-card-icon">🦿</span></div>
-          <input type="number" step="0.1" id="m-pantorrilla-izq" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Pantorrilla Der.</span><span class="measure-card-icon">🦿</span></div>
-          <input type="number" step="0.1" id="m-pantorrilla-der" placeholder="cm" />
-        </div>
-        <div class="measure-card">
-          <div class="measure-card-head"><span class="measure-card-label">Cadera</span><span class="measure-card-icon">🍑</span></div>
-          <input type="number" step="0.1" id="m-cadera" placeholder="cm" />
+        <svg class="figure" viewBox="0 0 130 380" aria-hidden="true">
+          <defs>
+            <pattern id="figdots" width="7" height="7" patternUnits="userSpaceOnUse">
+              <rect width="7" height="7" fill="#f6f2e8"/>
+              <circle cx="3.5" cy="3.5" r="1.1" fill="#111" opacity=".55"/>
+            </pattern>
+          </defs>
+          <g fill="url(#figdots)" stroke="#111" stroke-width="4">
+            <circle cx="65" cy="34" r="24"/>
+            <rect x="38" y="62" width="54" height="112" rx="22"/>
+            <rect x="8" y="66" width="20" height="104" rx="10"/>
+            <rect x="102" y="66" width="20" height="104" rx="10"/>
+            <rect x="38" y="172" width="26" height="196" rx="13"/>
+            <rect x="66" y="172" width="26" height="196" rx="13"/>
+          </g>
+          <g fill="#7a2bd8" stroke="#111" stroke-width="3.5">
+            <circle cx="65" cy="60" r="7"/><circle cx="65" cy="96" r="7"/><circle cx="65" cy="134" r="7"/><circle cx="65" cy="170" r="7"/>
+            <circle cx="18" cy="92" r="7"/><circle cx="18" cy="140" r="7"/><circle cx="112" cy="92" r="7"/><circle cx="112" cy="140" r="7"/>
+            <circle cx="51" cy="236" r="7"/><circle cx="79" cy="236" r="7"/><circle cx="51" cy="320" r="7"/><circle cx="79" cy="320" r="7"/>
+          </g>
+        </svg>
+
+        <div class="mcol pad">
+          <label class="mcard empty"><span class="mlabel">Brazo der.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-brazo-der" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard empty"><span class="mlabel">Antebr. der.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-antebrazo-der" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard single empty mgap1"><span class="mlabel">Muslo der.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-muslo-der" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
+          <label class="mcard single empty mgap2"><span class="mlabel">Pantorr. der.</span><span class="mrow"><input type="number" inputmode="decimal" step="0.1" id="m-pantorrilla-der" placeholder="¡MEDIR!"><span class="mdelta"></span></span></label>
         </div>
       </div>
-
-      <button class="save-btn" onclick="saveMedidor()" style="margin-top:16px;">Guardar medidas de hoy</button>
-      <button class="reset-btn" onclick="toggleHistorialMedidas()">Ver historial de medidas</button>
-      <div id="historial-medidas" style="display:none;margin-top:16px;"></div>
     </div>
+
+    <div class="mini-row">
+      <label class="mini empty"><span class="mlabel">Cuello</span><input type="number" inputmode="decimal" step="0.1" id="m-cuello" placeholder="+"><span class="mdelta"></span></label>
+      <label class="mini empty"><span class="mlabel">Hombro</span><input type="number" inputmode="decimal" step="0.1" id="m-hombro" placeholder="+"><span class="mdelta"></span></label>
+      <label class="mini empty"><span class="mlabel">Pecho</span><input type="number" inputmode="decimal" step="0.1" id="m-pecho" placeholder="+"><span class="mdelta"></span></label>
+      <label class="mini empty"><span class="mlabel">Cintura</span><input type="number" inputmode="decimal" step="0.1" id="m-abdomen" placeholder="+"><span class="mdelta"></span></label>
+      <label class="mini empty"><span class="mlabel">Cadera</span><input type="number" inputmode="decimal" step="0.1" id="m-cadera" placeholder="+"><span class="mdelta"></span></label>
+    </div>
+
+    <div class="med-count"><span id="med-count">—</span><span>Morado = por medir</span></div>
+    <button class="save-btn" onclick="saveMedidor()">Guardar medidas</button>
+    <button class="link-btn" onclick="toggleHistorialMedidas()">Ver historial de medidas</button>
+    <div id="historial-medidas" style="display:none;margin-top:6px;"></div>
   </div>
 
   <!-- STATS -->
   <div class="panel" id="panel-stats">
-    <div id="stats-results" style="display:none;">
-      <div class="stat-grid">
-        <div class="stat-box">
-          <div class="stat-box-label">IMC</div>
-          <div class="stat-box-val" id="imc-val">—</div>
-          <div class="stat-box-sub" id="imc-badge">—</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-box-label">Peso ideal</div>
-          <div class="stat-box-val green" id="ideal-val">—</div>
-          <div class="stat-box-sub">Rango saludable</div>
-        </div>
-      </div>
-      <div class="detail-card" id="stats-detail">—</div>
+    <div class="hero" style="margin-bottom:20px;">
+      <div class="eyebrow" id="eyebrow-stats">—</div>
+      <h1 class="display h-lg">Stats</h1>
+      <div class="sfx stats" aria-hidden="true"><span>ド</span><span>ド</span><span>ド</span></div>
     </div>
-
-    <div class="card" id="stats-empty-card">
-      <div style="text-align:center;padding:20px;">
-        <div style="font-size:40px;margin-bottom:10px;">⚖️</div>
-        <div style="font-size:13px;color:var(--text-2);">Registra tu peso en la pestaña Medidor</div>
-      </div>
-    </div>
-
-    <!-- Composición corporal -->
-    <div id="grasa-results" style="display:none;">
-      <div class="card">
-        <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-box-label">Grasa corporal</div>
-            <div class="stat-box-val" id="grasa-val">—</div>
-            <div class="stat-box-sub" id="grasa-badge">—</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-label">Peso magro</div>
-            <div class="stat-box-val green" id="magro-val">—</div>
-            <div class="stat-box-sub" id="magro-badge">kg</div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-box">
-            <div class="stat-box-label">Peso de grasa</div>
-            <div class="stat-box-val" id="peso-grasa-val">—</div>
-            <div class="stat-box-sub">kg</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-box-label">Diferencia ideal</div>
-            <div class="stat-box-val" id="diff-val">—</div>
-            <div class="stat-box-sub" id="diff-sub">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Medidas actuales (solo lectura) -->
-    <div class="card" id="medidas-actuales-card" style="display:none;">
-      <div class="card-title"><span class="icon">📏</span> Medidas actuales</div>
-      <div id="medidas-actuales-content"></div>
-    </div>
+    <div id="stats-content"></div>
   </div>
 
   <!-- ANÁLISIS -->
   <div class="panel" id="panel-analisis">
-    <div class="today-badge">
-      <div>
-        <div class="today-label">Análisis de hoy</div>
-        <div class="today-val" id="analisis-date">—</div>
-      </div>
+    <div class="hero" style="margin-bottom:6px;">
+      <div class="eyebrow">Análisis de hoy</div>
+      <h1 class="display h-lg" id="analisis-headline" style="line-height:.92;">Análisis</h1>
     </div>
-
-    <div id="analisis-content">
-      <div class="card" style="text-align:center;padding:40px 20px;">
-        <div style="font-size:48px;margin-bottom:12px;">📊</div>
-        <div style="font-size:13px;color:var(--text-2);">Ingresa tus medidas en Medidor</div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
-      </div>
-    </div>
+    <div id="analisis-content"></div>
   </div>
 
-  <!-- HISTORIAL -->
+  <!-- MES -->
   <div class="panel" id="panel-historial">
+    <div class="page-head">
+      <div>
+        <div class="eyebrow" id="eyebrow-mes">—</div>
+        <h1 class="display h-lg" id="mes-title">Mes</h1>
+      </div>
+      <div class="nav-btns">
+        <button class="sq-btn" onclick="previousMonth()" aria-label="Mes anterior">←</button>
+        <button class="sq-btn" onclick="nextMonth()" aria-label="Mes siguiente">→</button>
+      </div>
+    </div>
+
     <div class="card">
-      <div class="card-title"><span class="icon">📅</span> Mes</div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button class="reset-btn" onclick="previousMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">← Anterior</button>
-        <div style="flex:1;text-align:center;padding:8px;background:var(--s2);border-radius:var(--r-sm);font-family:'JetBrains Mono';font-size:11px;color:var(--text-2);" id="current-month">—</div>
-        <button class="reset-btn" onclick="nextMonth()" style="flex:1;background:var(--s2);color:var(--text-2);">Siguiente →</button>
+      <div class="cal-week"><div>D</div><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div></div>
+      <div class="cal-grid" id="calendar-grid"></div>
+      <div class="cal-legend">
+        <span><i class="sw" style="background:#111"></i>3/3</span>
+        <span><i class="sw" style="background:#7a2bd8"></i>2/3</span>
+        <span><i class="sw" style="background:#fff"></i>1/3</span>
+        <span class="push" id="perfect-count">0 días perfectos</span>
       </div>
-      <div class="calendar-grid" id="calendar-weekdays" style="margin-bottom:6px;">
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">D</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">L</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">M</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">M</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">J</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">V</div>
-        <div style="text-align:center;font-size:9px;color:var(--text-3);font-weight:700;">S</div>
-      </div>
-      <div class="calendar-grid" id="calendar-grid"></div>
     </div>
 
     <div class="card" id="day-detail-card" style="display:none;">
       <div id="day-detail-content"></div>
     </div>
 
-    <!-- Configuración & Admin -->
-    <div class="card">
-      <div class="card-title"><span class="icon">⚙️</span> Configuración</div>
-      <div class="config-section">
-        <div class="config-title">Editar día específico</div>
-        <input type="date" class="config-date-input" id="config-date" />
-        <div class="input-row" style="margin-bottom:8px;">
-          <input class="num-input" type="number" id="config-sleep" min="0" max="24" step="0.5" placeholder="Sueño" />
-          <span class="unit">h</span>
-        </div>
-        <div class="input-row" style="margin-bottom:8px;">
-          <input class="num-input" type="number" id="config-water" min="0" max="5000" step="100" placeholder="Agua" />
-          <span class="unit">ml</span>
-        </div>
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
-          <input type="checkbox" id="config-train" style="width:16px;height:16px;cursor:pointer;" />
-          <span style="font-size:12px;color:var(--text-2);">Entrenamiento</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
-          <input type="checkbox" id="config-doblete" style="width:16px;height:16px;cursor:pointer;" />
-          <span style="font-size:12px;color:var(--text-2);">Doblete (2 entrenos)</span>
-        </label>
-        <button class="config-btn" onclick="updateDayData()">💾 Guardar cambios</button>
+    <div class="card cream" id="compare-card">
+      <h2 class="card-title">Comparar</h2>
+      <div class="date-pair">
+        <div><div class="k">Fecha 1</div><input type="date" class="config-date-input" id="compare-date1" style="margin-bottom:0;" /></div>
+        <div><div class="k">Fecha 2</div><input type="date" class="config-date-input" id="compare-date2" style="margin-bottom:0;" /></div>
       </div>
-
-      <div class="config-section">
-        <div class="config-title">Comparar fechas</div>
-        <div style="font-size:10px;color:var(--text-2);margin-bottom:10px;">Compara dos días para ver cambios</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-          <div>
-            <div style="font-size:9px;color:var(--text-3);margin-bottom:4px;">Fecha 1</div>
-            <input type="date" class="config-date-input" id="compare-date1" style="margin-bottom:0;" />
-          </div>
-          <div>
-            <div style="font-size:9px;color:var(--text-3);margin-bottom:4px;">Fecha 2</div>
-            <input type="date" class="config-date-input" id="compare-date2" style="margin-bottom:0;" />
-          </div>
-        </div>
-        <button class="config-btn" onclick="compareNuevoClick()" style="margin-bottom:0;">🔄 Comparar</button>
-      </div>
+      <button class="config-btn" onclick="compareNuevoClick()" style="margin-bottom:0;">Comparar</button>
+      <div id="comparison-result" style="display:none;margin-top:18px;"></div>
     </div>
 
-    <div id="comparison-result" style="display:none;"></div>
+    <div class="card">
+      <h2 class="card-title">Editar día</h2>
+      <div class="config-section">
+        <div class="config-title">Elige la fecha y corrige sus hábitos</div>
+        <input type="date" class="config-date-input" id="config-date" />
+        <div class="input-row">
+          <input class="num-input" type="number" inputmode="decimal" id="config-sleep" min="0" max="24" step="0.1" placeholder="Sueño" />
+          <span class="unit">h</span>
+        </div>
+        <div class="input-row">
+          <input class="num-input" type="number" inputmode="numeric" id="config-water" min="0" max="5000" step="100" placeholder="Agua" />
+          <span class="unit">ml</span>
+        </div>
+        <label class="chk"><input type="checkbox" id="config-train" /> Entrenamiento</label>
+        <label class="chk"><input type="checkbox" id="config-doblete" /> Doblete (2 entrenos)</label>
+        <button class="config-btn" onclick="updateDayData()" style="margin-bottom:0;">Guardar cambios</button>
+      </div>
+    </div>
   </div>
 
 </main>
+
+<nav class="bottom-nav" aria-label="Secciones">
+  <button class="tab active" onclick="switchTab('habits')">Hoy</button>
+  <button class="tab" onclick="switchTab('medidor')">Medir</button>
+  <button class="tab" onclick="switchTab('stats')">Stats</button>
+  <button class="tab" onclick="switchTab('analisis')">Análisis</button>
+  <button class="tab" onclick="switchTab('historial')">Mes</button>
+</nav>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const URL_BASE='https://zfilewmutwyoomitgnsp.supabase.co/rest/v1';
 const KEY='sb_publishable_fJ94dsmRK_qloX4KzkqCXw_J1oIXFka';
 const HEADERS={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'};
 const META_SLEEP=8,META_WATER=2500,ALTURA_CM=171,EDAD=29;
-let waterVal=0,trainDone=false,dobleteDone=false,todayRecord=null;
+const GRASA_META=15,RATIO_META=1.6;
+let waterVal=0,trainDone=false,dobleteDone=false,todayRecord=null,todayMed=null,todayMedLoaded=false,rachaDias=0,proximoTab=null;
 const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Bogota'});
+const DIAS3=['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
+const MESES3=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MFIELDS=[
+  ['m-cuello','cuello_cm'],['m-hombro','hombro_cm'],['m-pecho','pecho_cm'],['m-abdomen','abdomen_cm'],
+  ['m-brazo-izq','brazo_izq_cm'],['m-brazo-der','brazo_der_cm'],['m-antebrazo-izq','antebrazo_izq_cm'],['m-antebrazo-der','antebrazo_der_cm'],
+  ['m-muslo-izq','muslo_izq_cm'],['m-muslo-der','muslo_der_cm'],['m-pantorrilla-izq','pantorrilla_izq_cm'],['m-pantorrilla-der','pantorrilla_der_cm'],
+  ['m-cadera','cadera_cm']
+];
+const CAMPO_NOMBRE={
+  cuello_cm:'Cuello',hombro_cm:'Hombro',pecho_cm:'Pecho',abdomen_cm:'Cintura',
+  brazo_izq_cm:'Brazo izquierdo',brazo_der_cm:'Brazo derecho',antebrazo_izq_cm:'Antebrazo izquierdo',antebrazo_der_cm:'Antebrazo derecho',
+  muslo_izq_cm:'Muslo izquierdo',muslo_der_cm:'Muslo derecho',pantorrilla_izq_cm:'Pantorrilla izquierda',pantorrilla_der_cm:'Pantorrilla derecha',
+  cadera_cm:'Cadera'
+};
 
 // Parsea un string "YYYY-MM-DD" como fecha LOCAL (evita el corrimiento de -1 día
 // que ocurre con new Date("YYYY-MM-DD") al interpretarse como UTC medianoche)
@@ -461,97 +512,182 @@ function parseLocalDate(dateStr){
   const [y,m,d]=dateStr.split('-').map(Number);
   return new Date(y,m-1,d);
 }
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function addDays(s,n){const d=parseLocalDate(s);d.setDate(d.getDate()+n);return ymd(d);}
+function diaDelAnio(s){const d=parseLocalDate(s);return Math.round((d-new Date(d.getFullYear(),0,0))/864e5);}
+function semanaISO(s){
+  const d=parseLocalDate(s);
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const n=t.getUTCDay()||7;
+  t.setUTCDate(t.getUTCDate()+4-n);
+  const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  return Math.ceil(((t-y)/864e5+1)/7);
+}
+const fmt1=n=>(Math.round(n*10)/10).toFixed(1);
+const signed=(n,dec=1)=>(n>0.00001?'+':n<-0.00001?'−':'')+Math.abs(n).toFixed(dec);
 
+// ---------- Datos compartidos ----------
+async function fetchMedidas(limit=120){
+  const r=await fetch(`${URL_BASE}/medidas_antropometricas?order=fecha.desc&limit=${limit}&select=*`,{headers:HEADERS});
+  const d=await r.json();
+  return Array.isArray(d)?d:[];
+}
+// Valor más reciente de cada campo (la lista viene ordenada de nuevo a viejo)
+function ultimoPorCampo(list){
+  const o={};
+  list.forEach(r=>Object.keys(r).forEach(k=>{if(o[k]==null&&r[k]!=null)o[k]=r[k];}));
+  return o;
+}
+function pesoDe(m){
+  if(!m)return null;
+  if(m.peso_kg!=null)return m.peso_kg;
+  const s=(m.peso_grasa_kg||0)+(m.peso_magro_kg||0);
+  return s?s:null;
+}
+// Hábitos por fecha en un rango (fusiona filas duplicadas tomando el mejor valor)
+async function fetchHabitsRange(a,b){
+  const r=await fetch(`${URL_BASE}/habits?fecha=gte.${a}&fecha=lte.${b}&select=*`,{headers:HEADERS});
+  const d=await r.json();
+  const o={};
+  (Array.isArray(d)?d:[]).forEach(x=>{
+    const c=o[x.fecha]||{};
+    o[x.fecha]={
+      fecha:x.fecha,
+      sueño_horas:Math.max(c.sueño_horas||0,x.sueño_horas||0),
+      entrenamiento:c.entrenamiento||x.entrenamiento||false,
+      agua_ml:Math.max(c.agua_ml||0,x.agua_ml||0),
+      doblete:c.doblete||x.doblete||false
+    };
+  });
+  return o;
+}
+
+const TABS=['habits','medidor','stats','analisis','historial'];
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['habits','medidor','stats','analisis','historial'][i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TABS[i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
+  window.scrollTo({top:0});
   if(name==='medidor') loadMedidorPanel();
   if(name==='analisis') loadAnalisisPanel();
   if(name==='historial') loadHistorialPanel();
   if(name==='stats') loadStatsPanel();
 }
 
+function renderHeaders(){
+  const d=parseLocalDate(today);
+  const cap='CAPÍTULO '+diaDelAnio(today);
+  document.getElementById('eyebrow-habits').textContent=`${cap} · ${DIAS3[d.getDay()]} ${d.getDate()} ${MESES3[d.getMonth()]}`;
+  document.getElementById('eyebrow-medidor').textContent=cap;
+  document.getElementById('eyebrow-stats').textContent='SEMANA '+semanaISO(today);
+}
+
 async function init(){
-  const now=new Date();
-  document.getElementById('hdr-date').innerHTML=now.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',timeZone:'America/Bogota'}).toUpperCase()+'<br>'+now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',timeZone:'America/Bogota'});
-  document.getElementById('today-date').textContent=now.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
+  renderHeaders();
+  renderTrain();
+  updateWaterDisplay();
   try{
     const res=await fetch(`${URL_BASE}/habits?fecha=eq.${today}&select=*`,{headers:HEADERS});
     const data=await res.json();
-    if(data.length){
+    if(Array.isArray(data)&&data.length){
       // Defensivo: si hay duplicados para hoy, fusionar tomando el mejor valor de cada campo
       const merged=data.reduce((acc,r)=>({
-        id:r.id, // usamos el id más reciente para futuros PATCH
+        id:r.id,
         sueño_horas:Math.max(acc.sueño_horas||0,r.sueño_horas||0),
         entrenamiento:acc.entrenamiento||r.entrenamiento||false,
         agua_ml:Math.max(acc.agua_ml||0,r.agua_ml||0),
-        doblete:acc.doblete||r.doblete||false,
-        cuello_cm:acc.cuello_cm||r.cuello_cm,
-        abdomen_cm:acc.abdomen_cm||r.abdomen_cm,
-        bicep_cm:acc.bicep_cm||r.bicep_cm,
-        muslo_cm:acc.muslo_cm||r.muslo_cm,
-        cadera_cm:acc.cadera_cm||r.cadera_cm
+        doblete:acc.doblete||r.doblete||false
       }),{});
       todayRecord=merged;
       prefillForm(merged);
     }
   }catch(e){console.error(e);}
+  loadRacha();
+  loadMedidorPanel();
 }
 
 function prefillForm(r){
   if(r.sueño_horas){document.getElementById('sleep-val').value=r.sueño_horas;updateSleepBar(r.sueño_horas);}
-  if(r.entrenamiento){trainDone=true;document.getElementById('train-toggle').classList.add('on');document.getElementById('train-icon').textContent='✓';document.getElementById('train-label').textContent='Entrené hoy';}
-  if(r.doblete){dobleteDone=true;trainDone=true;renderTrain();}
-  if(r.agua_ml){waterVal=r.agua_ml;updateWaterDisplay();}
-  updateChips(r);
+  if(r.entrenamiento)trainDone=true;
+  if(r.doblete){dobleteDone=true;trainDone=true;}
+  if(r.agua_ml)waterVal=r.agua_ml;
+  renderTrain();
+  updateWaterDisplay();
 }
 
-function updateChips(r){
-  document.getElementById('today-chips').innerHTML=`
-    <span class="chip ${r?.sueño_horas?'ok':'no'}">🌙</span>
-    <span class="chip ${r?.entrenamiento?'ok':'no'}">⚡</span>
-    <span class="chip ${r?.agua_ml>=META_WATER?'ok':'no'}">💧</span>`;
+// ---------- Racha, contador y "Próximo" ----------
+async function loadRacha(){
+  try{
+    const r=await fetch(`${URL_BASE}/habits?fecha=gte.${addDays(today,-90)}&select=*`,{headers:HEADERS});
+    const data=await r.json();
+    if(!Array.isArray(data))return;
+    const act=new Set();
+    data.forEach(d=>{if((d.sueño_horas||0)>0||d.entrenamiento||(d.agua_ml||0)>0)act.add(d.fecha);});
+    let cur=act.has(today)?today:addDays(today,-1),n=0;
+    while(act.has(cur)){n++;cur=addDays(cur,-1);}
+    rachaDias=n;
+    updateHoyMeta();
+  }catch(e){console.error(e);}
+}
+function sleepHoy(){return parseFloat(document.getElementById('sleep-val').value)||0;}
+function habitCount(){return (sleepHoy()>0?1:0)+(trainDone?1:0)+(waterVal>=META_WATER?1:0);}
+function updateHoyMeta(){
+  document.getElementById('pill-habits').textContent=`${habitCount()} / 3 HÁBITOS`;
+  document.getElementById('pill-racha').textContent=`RACHA ${rachaDias} ${rachaDias===1?'DÍA':'DÍAS'}`;
+  let txt='Todo listo por hoy ✓';proximoTab=null;
+  if(!todayMedLoaded){txt='…';}
+  else if(!todayMed||todayMed.peso_kg==null){txt='Próximo: registrar peso';proximoTab='medidor';}
+  else if(!(sleepHoy()>0)){txt='Próximo: registrar sueño';}
+  else if(!trainDone){txt='Próximo: entrenar';}
+  else if(waterVal<META_WATER){txt='Próximo: completar el agua';}
+  document.getElementById('next-text').textContent=txt;
+}
+function irProximo(){
+  if(proximoTab)switchTab(proximoTab);
+  else if(!(sleepHoy()>0))document.getElementById('sleep-val').focus();
 }
 
-function addWater(ml){waterVal=Math.min(5000,waterVal+ml);updateWaterDisplay();}
-function resetWater(){waterVal=0;updateWaterDisplay();}
-function updateWaterDisplay(){
-  document.getElementById('water-display').textContent=waterVal;
-  const pct=Math.min(100,Math.round(waterVal/META_WATER*100));
-  document.getElementById('water-bar').style.width=pct+'%';
-  document.getElementById('water-pct').textContent=pct+'%';
-}
+// ---------- Sueño, agua, entreno (se guardan solos) ----------
+const saveTimers={};
+function scheduleSave(type){clearTimeout(saveTimers[type]);saveTimers[type]=setTimeout(()=>save(type),700);}
 
-document.getElementById('sleep-val').addEventListener('input',function(){updateSleepBar(parseFloat(this.value)||0);});
+document.getElementById('sleep-val').addEventListener('input',function(){updateSleepBar(parseFloat(this.value)||0);updateHoyMeta();});
+document.getElementById('sleep-val').addEventListener('change',function(){save('sleep');});
 function updateSleepBar(v){
   const pct=Math.min(100,Math.round(v/META_SLEEP*100));
   document.getElementById('sleep-bar').style.width=pct+'%';
-  document.getElementById('sleep-pct').textContent=pct+'%';
+}
+
+function addWater(ml){waterVal=Math.min(5000,waterVal+ml);updateWaterDisplay();scheduleSave('water');}
+function resetWater(){waterVal=0;updateWaterDisplay();scheduleSave('water');}
+function updateWaterDisplay(){
+  document.getElementById('water-display').textContent=parseFloat((waterVal/1000).toFixed(2));
+  document.getElementById('water-bar').style.width=Math.min(100,Math.round(waterVal/META_WATER*100))+'%';
+  updateHoyMeta();
 }
 
 function renderTrain(){
-  document.getElementById('train-toggle').classList.toggle('on',trainDone);
-  document.getElementById('train-icon').textContent=trainDone?'✓':'○';
-  document.getElementById('train-label').textContent=trainDone?'Entrené hoy':'No entrené hoy';
+  document.getElementById('train-tile').classList.toggle('on',trainDone);
+  document.getElementById('train-label').textContent=dobleteDone?'¡DOBLETE!':trainDone?'¡HECHO!':'SIN ENTRENO';
   document.getElementById('doblete-toggle').classList.toggle('on',dobleteDone);
-  document.getElementById('doblete-icon').textContent=dobleteDone?'✓':'○';
-  document.getElementById('doblete-label').textContent=dobleteDone?'Doblete: entrené 2 veces':'Doblete (2 entrenos hoy)';
+  document.getElementById('doblete-icon').textContent=dobleteDone?'✓':'+';
+  document.getElementById('doblete-label').textContent=dobleteDone?'DOBLETE ×2':'DOBLETE';
+  updateHoyMeta();
 }
 function toggleTrain(){
   trainDone=!trainDone;
   if(!trainDone)dobleteDone=false;
   renderTrain();
+  save('train');
 }
 function toggleDoblete(){
   dobleteDone=!dobleteDone;
   if(dobleteDone)trainDone=true;
   renderTrain();
+  save('train');
 }
 
 async function save(type){
-  const btns=document.querySelectorAll('.save-btn');
-  btns.forEach(b=>b.disabled=true);
   let payload={fecha:today};
   if(type==='sleep') payload.sueño_horas=parseFloat(document.getElementById('sleep-val').value)||0;
   if(type==='train'){
@@ -565,13 +701,70 @@ async function save(type){
       headers:{...HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'},
       body:JSON.stringify(payload)
     });
+    if(!res.ok)throw new Error(await res.text());
     const data=await res.json();
     if(data[0])todayRecord=data[0];
-    updateChips({sueño_horas:parseFloat(document.getElementById('sleep-val').value)||todayRecord?.sueño_horas,entrenamiento:trainDone,agua_ml:waterVal});
-    showToast(type==='sleep'?'🌙 Sueño guardado':type==='train'?'⚡ Entrenamiento guardado':'💧 Agua guardada');
-  }catch(e){showToast('Error al guardar');}
-  finally{btns.forEach(b=>b.disabled=false);}
+    showToast(type==='sleep'?'🌙 Sueño guardado':type==='train'?'⚡ Entreno guardado':'💧 Agua guardada');
+    loadRacha();
+  }catch(e){showToast('Error al guardar');console.error(e);}
 }
+
+
+// ---------- Medidor ----------
+let medList=[],medPrev={};
+
+async function loadMedidorPanel(){
+  try{
+    medList=await fetchMedidas(120);
+    todayMed=medList.find(r=>r.fecha===today)||null;
+    todayMedLoaded=true;
+    const prevList=medList.filter(r=>r.fecha<today);
+    medPrev={};
+    MFIELDS.forEach(([id,f])=>{const r=prevList.find(x=>x[f]!=null);medPrev[f]=r?r[f]:null;});
+    MFIELDS.forEach(([id,f])=>{document.getElementById(id).value=(todayMed&&todayMed[f]!=null)?Number(todayMed[f]).toFixed(1):'';});
+    document.getElementById('peso-medidor').value=(todayMed&&todayMed.peso_kg!=null)?Number(todayMed.peso_kg).toFixed(1):'';
+    refreshMedidorUI();
+  }catch(e){console.error(e);}
+  updateHoyMeta();
+}
+
+function refreshMedidorUI(){
+  let n=0;
+  MFIELDS.forEach(([id,f])=>{
+    const inp=document.getElementById(id);
+    const v=parseFloat(inp.value);
+    const box=inp.closest('.mcard,.mini');
+    const dl=box.querySelector('.mdelta');
+    const has=!isNaN(v);
+    const p=medPrev[f];
+    box.classList.toggle('empty',!has);
+    if(has){
+      n++;
+      if(p!=null){
+        const d=v-p;
+        dl.textContent=Math.abs(d)<0.05?'=':signed(d);
+        dl.className='mdelta'+(d>=0.05?' up':'');
+      }else{dl.textContent='';dl.className='mdelta';}
+    }else{
+      dl.textContent=p!=null?'últ. '+p:'';
+      dl.className='mdelta';
+    }
+  });
+  document.getElementById('med-count').textContent=`${n} DE ${MFIELDS.length} REGISTRADAS`;
+
+  const pv=parseFloat(document.getElementById('peso-medidor').value);
+  const el=document.getElementById('peso-delta');
+  const prev=medList.find(r=>r.fecha<today&&r.peso_kg!=null);
+  if(!isNaN(pv)){
+    const ref=medList.find(r=>r.fecha<=addDays(today,-7)&&r.peso_kg!=null);
+    if(ref)el.textContent=`${signed(pv-ref.peso_kg)} ESTA SEMANA`;
+    else if(prev)el.textContent=`${signed(pv-prev.peso_kg)} VS ÚLTIMO`;
+    else el.textContent='PRIMER REGISTRO';
+  }else{
+    el.textContent=prev?`ÚLTIMO ${prev.peso_kg} KG`:'REGISTRA TU PESO';
+  }
+}
+document.querySelectorAll('.mcard input,.mini input,#peso-medidor').forEach(i=>i.addEventListener('input',refreshMedidorUI));
 
 function calcularGrasaUSNavy(cuello,abdomen,altura){
   const grasaPct=(86.010*Math.log10(abdomen-cuello))-(70.041*Math.log10(altura))+36.76;
@@ -581,24 +774,6 @@ function calcularGrasaUSNavy(cuello,abdomen,altura){
 function getMedidorValue(id){
   const v=parseFloat(document.getElementById(id).value);
   return isNaN(v)?null:v;
-}
-
-async function loadMedidorPanel(){
-  try{
-    const res=await fetch(`${URL_BASE}/medidas_antropometricas?fecha=eq.${today}&select=*`,{headers:HEADERS});
-    const data=await res.json();
-    if(!data.length)return;
-    const m=data[0];
-    const map={
-      'peso-medidor':'peso_kg','m-cuello':'cuello_cm','m-hombro':'hombro_cm','m-pecho':'pecho_cm','m-abdomen':'abdomen_cm',
-      'm-brazo-izq':'brazo_izq_cm','m-brazo-der':'brazo_der_cm','m-antebrazo-izq':'antebrazo_izq_cm','m-antebrazo-der':'antebrazo_der_cm',
-      'm-muslo-izq':'muslo_izq_cm','m-muslo-der':'muslo_der_cm','m-pantorrilla-izq':'pantorrilla_izq_cm','m-pantorrilla-der':'pantorrilla_der_cm',
-      'm-cadera':'cadera_cm'
-    };
-    Object.entries(map).forEach(([elId,field])=>{
-      if(m[field]!=null)document.getElementById(elId).value=m[field];
-    });
-  }catch(e){console.error(e);}
 }
 
 async function saveMedidor(){
@@ -650,251 +825,9 @@ async function saveMedidor(){
       body:JSON.stringify(payload)
     });
     showToast('📏 Medidas guardadas');
+    loadMedidorPanel();
     loadHistorialMedidas();
   }catch(e){showToast('Error al guardar medidas');console.error(e);}
-}
-
-function calcStatsFrom(peso){
-  const alturaM=ALTURA_CM/100;
-  const imc=peso/(alturaM*alturaM);
-  let imcClass,imcColor;
-  if(imc<18.5){imcClass='Bajo peso';imcColor='bajo';}
-  else if(imc<25){imcClass='Normal';imcColor='normal';}
-  else if(imc<30){imcClass='Sobrepeso';imcColor='sobrepeso';}
-  else{imcClass='Obesidad';imcColor='obesidad';}
-  const alturaIn=ALTURA_CM/2.54;
-  const pesoIdeal=50+2.3*(alturaIn-60);
-  const diff=peso-pesoIdeal;
-
-  document.getElementById('imc-val').textContent=imc.toFixed(1);
-  document.getElementById('imc-val').className='stat-box-val '+(imcColor==='normal'?'green':imcColor==='sobrepeso'?'yellow':'red');
-  document.getElementById('imc-badge').innerHTML=`<span class="badge ${imcColor}">${imcClass}</span>`;
-  document.getElementById('ideal-val').textContent=pesoIdeal.toFixed(1)+' kg';
-  document.getElementById('stats-detail').innerHTML=`
-    <strong style="color:var(--gold-l);display:block;margin-bottom:6px;">Resumen</strong>
-    Peso: <strong style="color:var(--text)">${peso} kg</strong> · Altura: <strong style="color:var(--text)">${ALTURA_CM} cm</strong> · Edad: <strong style="color:var(--text)">${EDAD} años</strong><br>
-    IMC: <strong style="color:var(--text)">${imc.toFixed(1)}</strong> → ${imcClass}<br>
-    Peso ideal: <strong style="color:var(--text)">${pesoIdeal.toFixed(1)} kg</strong><br>
-    ${Math.abs(diff)>0.5?`${diff>0?'Bajar':'Subir'} <strong style="color:var(--text)">${Math.abs(diff).toFixed(1)} kg</strong> para llegar al peso ideal`:'<strong style="color:var(--green)">¡Estás en tu peso ideal!</strong>'}
-  `;
-  document.getElementById('stats-results').style.display='block';
-  document.getElementById('stats-empty-card').style.display='none';
-}
-
-async function loadAnalisisPanel(){
-  try{
-    const res=await fetch(`${URL_BASE}/medidas_antropometricas?order=fecha.desc&limit=1&select=*`,{headers:HEADERS});
-    const data=await res.json();
-    
-    if(!data.length||data[0].grasa_pct==null){
-      document.getElementById('analisis-content').innerHTML=`
-        <div class="card" style="text-align:center;padding:40px 20px;">
-          <div style="font-size:48px;margin-bottom:12px;">📊</div>
-          <div style="font-size:13px;color:var(--text-2);">Ingresa tu peso, cuello y abdomen en Medidor</div>
-          <div style="font-size:11px;color:var(--text-3);margin-top:8px;">y tu análisis aparecerá aquí</div>
-        </div>
-      `;
-      return;
-    }
-    
-    const m=data[0];
-    const peso=m.peso_grasa_kg+m.peso_magro_kg;
-    const grasaPct=m.grasa_pct;
-    const pesoGrasa=m.peso_grasa_kg;
-    const pesoMagro=m.peso_magro_kg;
-    const cuello=m.cuello_cm;
-    const abdomen=m.abdomen_cm;
-    
-    const fechaFormato=parseLocalDate(m.fecha).toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
-    document.getElementById('analisis-date').textContent=fechaFormato;
-    
-    // Composición corporal
-    const pesoAgua=pesoMagro*0.72;
-    const pesoProteina=pesoMagro*0.20;
-    const pesoHueso=pesoMagro*0.08;
-    
-    // Tipo de cuerpo
-    let tipoNombre,tipoDesc;
-    if(grasaPct<8){
-      tipoNombre='Esencial';
-      tipoDesc='Nivel de grasa vital. Muy bajo, requiere atención médica.';
-    }else if(grasaPct<20){
-      tipoNombre='Atlético';
-      tipoDesc='Excelente condición física. Bajo porcentaje de grasa con músculo definido.';
-    }else if(grasaPct<25){
-      tipoNombre='Normal';
-      tipoDesc='Composición saludable. Grasa y músculo en equilibrio.';
-    }else if(grasaPct<30){
-      tipoNombre='Elevado';
-      tipoDesc='Grasa moderadamente elevada. Requiere control de dieta y ejercicio.';
-    }else if(grasaPct<35){
-      tipoNombre='Sobrepeso';
-      tipoDesc='Exceso de grasa corporal. Se recomienda programa de actividad física.';
-    }else{
-      tipoNombre='Obesidad';
-      tipoDesc='Porcentaje de grasa alto. Necesita atención y control médico regular.';
-    }
-    
-    // Metas
-    const pesoIdeal=50+2.3*(ALTURA_CM/2.54-60);
-    const diffPeso=peso-pesoIdeal;
-    const grasaIdeal=pesoIdeal*0.18;
-    const diffGrasa=pesoGrasa-grasaIdeal;
-    const musculoIdeal=pesoIdeal*0.20*5;
-    const diffMusculo=pesoProteina-musculoIdeal;
-    
-    // TMB (Mifflin-St Jeor, hombre) + calorías estimadas
-    const tmb=(10*peso)+(6.25*ALTURA_CM)-(5*EDAD)+5;
-    const calMantenimiento=tmb*1.375; // actividad ligera-moderada
-    const calDeficit=calMantenimiento-500;
-    const calSuperavit=calMantenimiento+300;
-    // Tiempo estimado para perder grasa sobrante (1kg grasa ≈ 7700 kcal, déficit 500/día)
-    const semanasParaMeta=diffGrasa>0?Math.ceil((diffGrasa*7700)/500/7):0;
-    
-    // Recomendaciones
-    let recHtml='';
-    if(grasaPct>25){
-      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Aumenta ejercicio aeróbico 30-40min, 4-5 veces por semana</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Agrega entrenamiento de fuerza 2-3 veces por semana</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Controla ingesta de calorías, aumenta proteína a 1.6g/kg</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">💧</div><div class="rec-text">Mantén hidratación: 3-4L de agua diaria</div></div>`;
-    }else if(grasaPct>20){
-      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Mantén actividad regular 150-200min por semana</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Fortalecimiento muscular 2-3 veces por semana</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Dieta balanceada: 1.2-1.5g proteína por kg de peso</div></div>`;
-    }else{
-      recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Mantén rutina de fuerza para preservar masa muscular</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Continúa con actividad aeróbica moderada</div></div>`;
-      recHtml+=`<div class="rec-item"><div class="rec-icon">✨</div><div class="rec-text">Excelente condición física, mantén disciplina</div></div>`;
-    }
-    
-    const camposMedidas=[
-      ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
-      ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
-      ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
-      ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
-      ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
-      ['cadera_cm','Cadera']
-    ];
-    const medidasHtml=camposMedidas.filter(([k])=>m[k]!=null).map(([k,label])=>`
-      <div class="comp-item">
-        <div class="comp-item-val">${m[k]}</div>
-        <div class="comp-item-label">${label}</div>
-        <div class="comp-item-sub">cm</div>
-      </div>
-    `).join('');
-    
-    document.getElementById('analisis-content').innerHTML=`
-      <div class="card">
-        <div class="card-title"><span class="icon">📏</span> Medidas antropométricas</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          ${medidasHtml}
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="icon">📊</span> Composición corporal</div>
-        <div class="card-subtitle">Calculado con fórmula US Navy (cuello + abdomen)</div>
-        <div class="comp-visual" style="margin-bottom:0;">
-          <div class="comp-item">
-            <div class="comp-item-val">${peso.toFixed(1)}</div>
-            <div class="comp-item-label">Peso total</div>
-            <div class="comp-item-sub">kg</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val" style="color:var(--teal-l);">${pesoAgua.toFixed(1)}</div>
-            <div class="comp-item-label">Agua</div>
-            <div class="comp-item-sub">72%</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val" style="color:var(--red);">${pesoGrasa.toFixed(1)}</div>
-            <div class="comp-item-label">Grasa</div>
-            <div class="comp-item-sub">${grasaPct.toFixed(1)}%</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val" style="color:var(--gold-l);">${pesoProteina.toFixed(1)}</div>
-            <div class="comp-item-label">Proteína</div>
-            <div class="comp-item-sub">20%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="body-type-box" style="margin-bottom:0;background:none;border:none;padding:0;">
-          <div class="body-type-label">Clasificación</div>
-          <div class="body-type-val">${tipoNombre}</div>
-          <div class="body-type-desc">${tipoDesc}</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="icon">🔥</span> Gasto calórico estimado</div>
-        <div class="card-subtitle">Fórmula Mifflin-St Jeor + actividad ligera-moderada</div>
-        <div class="comp-visual" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:0;">
-          <div class="comp-item">
-            <div class="comp-item-val" style="font-size:16px;">${tmb.toFixed(0)}</div>
-            <div class="comp-item-label">TMB</div>
-            <div class="comp-item-sub">kcal/día</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val" style="font-size:16px;color:var(--gold-l);">${calMantenimiento.toFixed(0)}</div>
-            <div class="comp-item-label">Mantener</div>
-            <div class="comp-item-sub">kcal/día</div>
-          </div>
-          <div class="comp-item">
-            <div class="comp-item-val" style="font-size:16px;color:${diffGrasa>0?'var(--red)':'var(--green)'};">${diffGrasa>0?calDeficit.toFixed(0):calSuperavit.toFixed(0)}</div>
-            <div class="comp-item-label">${diffGrasa>0?'Déficit':'Superávit'}</div>
-            <div class="comp-item-sub">kcal/día</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="icon">📊</span> Metas personalizadas</div>
-        <div class="card-subtitle">Para alcanzar peso ideal (${pesoIdeal.toFixed(1)}kg)</div>
-        
-        <div class="goal-progress">
-          <div class="goal-label">
-            <span>Peso total</span>
-            <span>${(diffPeso>0?'+':'')+diffPeso.toFixed(1)} kg</span>
-          </div>
-          <div class="goal-bar">
-            <div class="goal-fill" style="width:${Math.min(100,Math.abs(diffPeso)*5)}%;background:${diffPeso>0?'var(--red)':'var(--green)'};"></div>
-          </div>
-        </div>
-
-        <div class="goal-progress">
-          <div class="goal-label">
-            <span>Grasa a perder</span>
-            <span>${(diffGrasa>0?'+':'')+diffGrasa.toFixed(1)} kg</span>
-          </div>
-          <div class="goal-bar">
-            <div class="goal-fill negative" style="width:${Math.min(100,Math.abs(diffGrasa)*5)}%;"></div>
-          </div>
-        </div>
-
-        <div class="goal-progress" style="margin-bottom:0;">
-          <div class="goal-label">
-            <span>Músculo a ganar</span>
-            <span>${(diffMusculo>0?'+':'')+diffMusculo.toFixed(2)} kg</span>
-          </div>
-          <div class="goal-bar">
-            <div class="goal-fill positive" style="width:${Math.min(100,Math.abs(diffMusculo)*5)}%;"></div>
-          </div>
-        </div>
-
-        ${semanasParaMeta>0?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--text-2);">⏱️ A un déficit de 500 kcal/día, llegarías a tu grasa ideal en aprox. <strong style="color:var(--text)">${semanasParaMeta} semanas</strong></div>`:''}
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="icon">💡</span> Recomendaciones</div>
-        ${recHtml}
-      </div>
-    `;
-  }catch(e){
-    console.error(e);
-    document.getElementById('analisis-content').innerHTML=`<div class="card" style="text-align:center;color:var(--red);">Error al cargar análisis</div>`;
-  }
 }
 
 async function loadHistorialMedidas(){
@@ -936,85 +869,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-let currentMonth=new Date();
-async function loadStatsPanel(){
-  try{
-    // Traemos el registro más reciente que tenga datos (hoy o el último guardado)
-    const res=await fetch(`${URL_BASE}/medidas_antropometricas?order=fecha.desc&limit=1&select=*`,{headers:HEADERS});
-    const data=await res.json();
-    
-    if(!data.length){
-      document.getElementById('stats-results').style.display='none';
-      document.getElementById('grasa-results').style.display='none';
-      document.getElementById('medidas-actuales-card').style.display='none';
-      document.getElementById('stats-empty-card').style.display='block';
-      return;
-    }
-    
-    const m=data[0];
-    
-    // IMC y peso ideal (si hay peso registrado)
-    if(m.peso_kg){
-      calcStatsFrom(m.peso_kg);
-    }else{
-      document.getElementById('stats-results').style.display='none';
-      document.getElementById('stats-empty-card').style.display='block';
-    }
-    
-    // Composición corporal (si hay grasa calculada)
-    if(m.grasa_pct){
-      document.getElementById('grasa-results').style.display='block';
-      document.getElementById('grasa-val').textContent=m.grasa_pct.toFixed(1)+'%';
-      let grasaClass,grasaColor;
-      if(m.grasa_pct<8){grasaClass='Esencial';grasaColor='bajo';}
-      else if(m.grasa_pct<20){grasaClass='Atlético';grasaColor='atletico';}
-      else if(m.grasa_pct<25){grasaClass='Normal';grasaColor='normal';}
-      else if(m.grasa_pct<30){grasaClass='Elevado';grasaColor='alto';}
-      else{grasaClass='Obesidad';grasaColor='obesidad';}
-      document.getElementById('grasa-badge').innerHTML=`<span class="badge ${grasaColor}">${grasaClass}</span>`;
-      document.getElementById('magro-val').textContent=(m.peso_magro_kg||0).toFixed(1);
-      document.getElementById('peso-grasa-val').textContent=(m.peso_grasa_kg||0).toFixed(1);
-      const pesoIdeal=50+2.3*(ALTURA_CM/2.54-60);
-      const diff=(m.peso_kg||0)-pesoIdeal;
-      document.getElementById('diff-val').textContent=(diff>0?'+':'')+diff.toFixed(1)+' kg';
-      document.getElementById('diff-val').className='stat-box-val '+(Math.abs(diff)<2?'green':diff>0?'red':'yellow');
-      document.getElementById('diff-sub').textContent=diff>0?'por encima del ideal':diff<0?'por debajo del ideal':'en peso ideal';
-    }else{
-      document.getElementById('grasa-results').style.display='none';
-    }
-    
-    // Todas las medidas actuales
-    const campos=[
-      ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
-      ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
-      ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
-      ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
-      ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
-      ['cadera_cm','Cadera']
-    ];
-    const itemsHtml=campos.filter(([k])=>m[k]!=null).map(([k,label])=>`
-      <div class="comp-item">
-        <div class="comp-item-val">${m[k]}</div>
-        <div class="comp-item-label">${label}</div>
-        <div class="comp-item-sub">cm</div>
-      </div>
-    `).join('');
-    
-    if(itemsHtml){
-      document.getElementById('medidas-actuales-content').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">${itemsHtml}</div>`;
-      document.getElementById('medidas-actuales-card').style.display='block';
-    }else{
-      document.getElementById('medidas-actuales-card').style.display='none';
-    }
-  }catch(e){
-    console.error(e);
-  }
-}
-
-async function loadHistorialPanel(){
-  loadCalendar();
-}
-
 function previousMonth(){
   currentMonth.setMonth(currentMonth.getMonth()-1);
   loadCalendar();
@@ -1025,65 +879,338 @@ function nextMonth(){
   loadCalendar();
 }
 
-async function loadCalendar(){
-  const year=currentMonth.getFullYear();
-  const month=currentMonth.getMonth();
-  
-  document.getElementById('current-month').textContent=currentMonth.toLocaleDateString('es-CO',{month:'long',year:'numeric',timeZone:'America/Bogota'}).toUpperCase();
-  
-  const firstDay=new Date(year,month,1);
-  const lastDay=new Date(year,month+1,0);
-  const daysInMonth=lastDay.getDate();
-  const startingDayOfWeek=firstDay.getDay();
-  
-  // Obtener datos del mes
-  const monthStart=new Date(year,month,1).toLocaleDateString('en-CA');
-  const monthEnd=new Date(year,month+1,0).toLocaleDateString('en-CA');
-  
+
+// ---------- Stats ----------
+let currentMonth=(()=>{const d=parseLocalDate(today);return new Date(d.getFullYear(),d.getMonth(),1);})();
+
+async function loadStatsPanel(){
+  const el=document.getElementById('stats-content');
   try{
-    const res=await fetch(`${URL_BASE}/habits?fecha=gte.${monthStart}&fecha=lte.${monthEnd}&select=*`,{headers:HEADERS});
-    const data=await res.json();
-    const dataByDate={};
-    data.forEach(d=>{
-      if(!dataByDate[d.fecha]){
-        dataByDate[d.fecha]=d;
-      }else{
-        // Fusionar si hay duplicados para la misma fecha
-        const acc=dataByDate[d.fecha];
-        dataByDate[d.fecha]={
-          fecha:d.fecha,
-          sueño_horas:Math.max(acc.sueño_horas||0,d.sueño_horas||0),
-          entrenamiento:acc.entrenamiento||d.entrenamiento||false,
-          agua_ml:Math.max(acc.agua_ml||0,d.agua_ml||0),
-          doblete:acc.doblete||d.doblete||false
-        };
+    const mon=addDays(today,-((parseLocalDate(today).getDay()+6)%7));
+    const [list,wk]=await Promise.all([fetchMedidas(120),fetchHabitsRange(mon,addDays(mon,6))]);
+    const ult=ultimoPorCampo(list);
+
+    if(ult.peso_kg==null){
+      el.innerHTML=`<div class="card"><div class="empty-note">Registra tu peso en MEDIR</div></div>`;
+      return;
+    }
+
+    // IMC y rango saludable (IMC 18.5 – 24.9)
+    const peso=ult.peso_kg,h=ALTURA_CM/100,imc=peso/(h*h);
+    const clase=imc<18.5?'Bajo peso':imc<25?'Normal':imc<30?'Sobrepeso':'Obesidad';
+    const pMin=18.5*h*h,pMax=24.9*h*h;
+    const idealSub=peso<pMin?`kg · te faltan ${fmt1(pMin-peso)}`:peso>pMax?`kg · sobran ${fmt1(peso-pMax)}`:'kg · estás dentro';
+
+    // Composición corporal (último registro con grasa calculada)
+    const rg=list.find(r=>r.grasa_pct!=null);
+    let comp='';
+    if(rg){
+      const pg=rg.peso_grasa_kg||0,pm=rg.peso_magro_kg||0,tot=(pg+pm)||1;
+      const tail=Math.max(6,Math.min(60,Math.round(pg/tot*100)));
+      const metaKg=pm*GRASA_META/(100-GRASA_META);
+      const aMeta=pg-metaKg;
+      comp=`
+        <section class="card">
+          <h2 class="card-title">Composición corporal</h2>
+          <div class="comp-bar">
+            <div class="comp-lean" style="width:${100-tail}%"><span>MAGRO ${fmt1(pm)} KG</span></div>
+            <div class="comp-fat" style="width:${tail}%"></div>
+          </div>
+          <div class="trio">
+            <div><div class="k">Grasa</div><div class="v">${fmt1(rg.grasa_pct)}%</div></div>
+            <div><div class="k">Peso grasa</div><div class="v">${fmt1(pg)} kg</div></div>
+            <div><div class="k">A meta</div><div class="v acc">${aMeta>0.05?'−'+fmt1(aMeta)+' kg':'✓ META'}</div></div>
+          </div>
+          <div class="foot">Meta de grasa: ${GRASA_META}% · fórmula US Navy (cuello + abdomen)</div>
+        </section>`;
+    }
+
+    // Sueño de la semana (lunes a domingo)
+    const lbl=['L','M','M','J','V','S','D'];
+    const bars=lbl.map((l,i)=>{
+      const hrs=(wk[addDays(mon,i)]||{}).sueño_horas||0;
+      const pct=Math.min(100,hrs/10*100);
+      return `<div class="bar ${hrs>=META_SLEEP?'goal':''} ${hrs?'':'none'}" style="height:${hrs?Math.max(pct,6):0}%"></div>`;
+    }).join('');
+    const sleepCard=`
+      <section class="card cream">
+        <div class="card-title"><span>Sueño · 7 días</span><span class="k" style="font-family:var(--body);font-size:12px;">— Meta 8h</span></div>
+        <div class="chart-wrap">
+          <div class="chart"><div class="goal-line"></div>${bars}</div>
+          <div class="bar-lbls">${lbl.map(l=>`<div>${l}</div>`).join('')}</div>
+        </div>
+      </section>`;
+
+    // Medidas actuales (último valor conocido de cada zona)
+    const campos=[
+      ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura'],
+      ['brazo_izq_cm','Brazo izq.'],['brazo_der_cm','Brazo der.'],['antebrazo_izq_cm','Antebr. izq.'],['antebrazo_der_cm','Antebr. der.'],
+      ['muslo_izq_cm','Muslo izq.'],['muslo_der_cm','Muslo der.'],['pantorrilla_izq_cm','Pantorr. izq.'],['pantorrilla_der_cm','Pantorr. der.'],
+      ['cadera_cm','Cadera']
+    ].filter(([k])=>ult[k]!=null);
+    const medCard=campos.length?`
+      <section class="card">
+        <h2 class="card-title">Medidas actuales</h2>
+        <div class="mt-grid">${campos.map(([k,l])=>`<div class="mt"><div class="k">${l}</div><div class="v">${ult[k]}</div></div>`).join('')}</div>
+        <div class="foot">Valores en cm · último registro de cada zona</div>
+      </section>`:'';
+
+    el.innerHTML=`
+      <div class="stat-tiles">
+        <div class="stile black"><div class="k">IMC</div><div class="big">${fmt1(imc)}</div><div class="sub">${clase} · ${h.toFixed(2)} m</div></div>
+        <div class="stile white"><div class="k">Peso ideal</div><div class="big">${Math.round(pMin)}–${Math.round(pMax)}</div><div class="sub">${idealSub}</div></div>
+      </div>
+      ${comp}${sleepCard}${medCard}`;
+  }catch(e){
+    console.error(e);
+    el.innerHTML=`<div class="card"><div class="empty-note">Error al cargar stats</div></div>`;
+  }
+}
+
+// ---------- Análisis ----------
+function setHeadline(html){document.getElementById('analisis-headline').innerHTML=html;}
+
+async function loadAnalisisPanel(){
+  const box=document.getElementById('analisis-content');
+  try{
+    const list=await fetchMedidas(150);
+    if(!list.length){
+      setHeadline('Análisis');
+      box.innerHTML=`<div class="card"><div class="empty-note">Ingresa tus medidas en MEDIR y aquí aparecerá tu análisis</div></div>`;
+      return;
+    }
+    const ult=ultimoPorCampo(list);
+    const fechas={};
+    MFIELDS.forEach(([id,f])=>{const r=list.find(x=>x[f]!=null);fechas[f]=r?r.fecha:null;});
+
+    // 1) Proporción hombro / cintura
+    let ratioHtml='';
+    if(ult.hombro_cm&&ult.abdomen_cm){
+      const ratio=ult.hombro_cm/ult.abdomen_cm;
+      const falta=RATIO_META-ratio;
+      ratioHtml=`
+        <div class="ratio-card">
+          <div><div class="k">Proporción hombro / cintura</div><div class="num">${ratio.toFixed(2)}</div></div>
+          <div class="ratio-side">Meta ${RATIO_META.toFixed(2)}<br>${falta>0.004?`<span class="acc">faltan ${falta.toFixed(2)}</span>`:`<span class="acc">¡meta lograda!</span>`}</div>
+        </div>`;
+    }
+
+    // 2) Simetría: el par izquierdo/derecho con más diferencia
+    const pares=[['Brazo','brazo_izq_cm','brazo_der_cm',true],['Antebrazo','antebrazo_izq_cm','antebrazo_der_cm',true],['Muslo','muslo_izq_cm','muslo_der_cm',true],['Pantorrilla','pantorrilla_izq_cm','pantorrilla_der_cm',false]];
+    let best=null;
+    pares.forEach(([n,i,d,m])=>{
+      if(ult[i]!=null&&ult[d]!=null){
+        const diff=ult[d]-ult[i];
+        if(!best||Math.abs(diff)>Math.abs(best.diff))best={n,diff,m};
       }
     });
-    
-    let html='';
-    // Días vacíos antes del primer día
-    for(let i=0;i<startingDayOfWeek;i++){
-      html+=`<div class="calendar-day empty"></div>`;
-    }
-    
-    // Días del mes
-    for(let day=1;day<=daysInMonth;day++){
-      const dateStr=new Date(year,month,day).toLocaleDateString('en-CA');
-      const dayData=dataByDate[dateStr];
-      let status='empty';
-      let indicator='';
-      
-      if(dayData){
-        const count=(dayData.sueño_horas?1:0)+(dayData.entrenamiento?1:0)+(dayData.agua_ml>=2500?1:0);
-        if(count===3) status='ok';
-        else if(count>0) status='partial';
-        indicator=count>0?count:'';
+    let simHtml='';
+    if(best){
+      const a=Math.abs(best.diff);
+      let txt;
+      if(a<0.05)txt=`${best.n}s parejos: izquierdo y derecho iguales.`;
+      else{
+        const lado=best.diff>0?(best.m?'derecho':'derecha'):(best.m?'izquierdo':'izquierda');
+        const otro=best.diff>0?(best.m?'izquierdo':'izquierda'):(best.m?'derecho':'derecha');
+        txt=`${best.n} ${lado} +${a.toFixed(1)} cm sobre el ${otro}.`.replace(/sobre el (izquierda|derecha)/,'sobre la $1');
       }
-      
-      html+=`<div class="calendar-day ${status}" onclick="selectDay('${dateStr}')">${indicator||day}</div>`;
+      txt+=a<1?' Diferencia normal: menos de 1 cm.':' Diferencia notable: prioriza el lado más débil.';
+      simHtml=`<div class="bubble"><h3>Simetría</h3><p>${txt}</p></div>`;
     }
-    
+
+    // 3) Tendencia de cintura (~4 semanas) y titular
+    let cinHtml='',headline='¡SIGUE<br>ASÍ!';
+    const cA=list.find(r=>r.abdomen_cm!=null);
+    if(cA){
+      let ref=list.find(r=>r.fecha<=addDays(cA.fecha,-28)&&r.abdomen_cm!=null);
+      if(!ref)ref=[...list].reverse().find(r=>r.abdomen_cm!=null&&r.fecha<cA.fecha);
+      if(ref&&ref.fecha!==cA.fecha){
+        const dias=(parseLocalDate(cA.fecha)-parseLocalDate(ref.fecha))/864e5;
+        const sem=Math.max(1,Math.round(dias/7));
+        const d=cA.abdomen_cm-ref.abdomen_cm;
+        const pRef=list.find(r=>r.fecha<=ref.fecha&&r.pecho_cm!=null);
+        let pecho='';
+        if(ult.pecho_cm!=null&&pRef){
+          const dp=ult.pecho_cm-pRef.pecho_cm;
+          pecho=Math.abs(dp)<=1?' mientras el pecho se mantiene':` y el pecho ${signed(dp)} cm`;
+        }
+        let veredicto,
+          cintxt=`${signed(d)} cm en ${sem} ${sem===1?'semana':'semanas'}${pecho}.`;
+        if(d<-0.2){veredicto=' Vas en la dirección correcta.';headline='¡BUEN<br>AVANCE!';}
+        else if(d>0.5){veredicto=' Sube un poco: revisa dieta y descanso.';headline='¡A<br>AJUSTAR!';}
+        else{veredicto=' Se mantiene estable.';headline='¡VAS<br>ESTABLE!';}
+        cinHtml=`<div class="bubble alt"><h3>Cintura</h3><p>${cintxt}${veredicto}</p></div>`;
+      }else{
+        cinHtml=`<div class="bubble alt"><h3>Cintura</h3><p>Mide de nuevo en un par de semanas para ver tu tendencia.</p></div>`;
+      }
+    }
+    setHeadline(headline);
+
+    // 4) Siguiente misión
+    const faltan=MFIELDS.filter(([id,f])=>ult[f]==null);
+    let mision;
+    if(faltan.length){
+      mision=`Mide ${CAMPO_NOMBRE[faltan[0][1]].toLowerCase()} para completar las ${MFIELDS.length} zonas.`;
+    }else{
+      let old=null;
+      MFIELDS.forEach(([id,f])=>{const dt=fechas[f];if(dt&&(!old||dt<old.dt))old={f,dt};});
+      const dias=old?Math.round((parseLocalDate(today)-parseLocalDate(old.dt))/864e5):0;
+      mision=dias>=7?`Hace ${dias} días no mides ${CAMPO_NOMBRE[old.f].toLowerCase()}. Actualízala.`:'Todas tus zonas están al día. ¡Sigue así!';
+    }
+    const misionHtml=`<div class="mission"><div class="bang">!</div><div><div class="k">Siguiente misión</div><p>${mision}</p></div></div>`;
+
+    // ---------- Detalle (composición, gasto, metas, recomendaciones) ----------
+    let detalle='';
+    const m=list.find(r=>r.grasa_pct!=null);
+    if(m){
+      const pesoGrasa=m.peso_grasa_kg||0,pesoMagro=m.peso_magro_kg||0,grasaPct=m.grasa_pct;
+      const peso=pesoGrasa+pesoMagro;
+      const pesoAgua=pesoMagro*0.72,pesoProteina=pesoMagro*0.20;
+
+      let tipoNombre,tipoDesc;
+      if(grasaPct<8){tipoNombre='Esencial';tipoDesc='Nivel de grasa vital. Muy bajo, requiere atención médica.';}
+      else if(grasaPct<20){tipoNombre='Atlético';tipoDesc='Excelente condición física. Bajo porcentaje de grasa con músculo definido.';}
+      else if(grasaPct<25){tipoNombre='Normal';tipoDesc='Composición saludable. Grasa y músculo en equilibrio.';}
+      else if(grasaPct<30){tipoNombre='Elevado';tipoDesc='Grasa moderadamente elevada. Requiere control de dieta y ejercicio.';}
+      else if(grasaPct<35){tipoNombre='Sobrepeso';tipoDesc='Exceso de grasa corporal. Se recomienda programa de actividad física.';}
+      else{tipoNombre='Obesidad';tipoDesc='Porcentaje de grasa alto. Necesita atención y control médico regular.';}
+
+      // Metas: llegar a GRASA_META % de grasa conservando la masa magra
+      const metaGrasaKg=pesoMagro*GRASA_META/(100-GRASA_META);
+      const diffGrasa=pesoGrasa-metaGrasaKg;
+      const pesoObjetivo=pesoMagro+metaGrasaKg;
+      const diffPeso=peso-pesoObjetivo;
+
+      // TMB (Mifflin-St Jeor, hombre) + calorías estimadas
+      const tmb=(10*peso)+(6.25*ALTURA_CM)-(5*EDAD)+5;
+      const calMantenimiento=tmb*1.375;
+      const calDeficit=calMantenimiento-500;
+      const calSuperavit=calMantenimiento+300;
+      // 1 kg de grasa ≈ 7700 kcal, déficit de 500/día
+      const semanasParaMeta=diffGrasa>0?Math.ceil((diffGrasa*7700)/500/7):0;
+
+      let recHtml='';
+      if(grasaPct>25){
+        recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Aumenta ejercicio aeróbico 30-40min, 4-5 veces por semana</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Agrega entrenamiento de fuerza 2-3 veces por semana</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Controla ingesta de calorías, aumenta proteína a 1.6g/kg</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">💧</div><div class="rec-text">Mantén hidratación: 3-4L de agua diaria</div></div>`;
+      }else if(grasaPct>20){
+        recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Mantén actividad regular 150-200min por semana</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Fortalecimiento muscular 2-3 veces por semana</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">🥗</div><div class="rec-text">Dieta balanceada: 1.2-1.5g proteína por kg de peso</div></div>`;
+      }else{
+        recHtml+=`<div class="rec-item"><div class="rec-icon">💪</div><div class="rec-text">Mantén rutina de fuerza para preservar masa muscular</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">🏃</div><div class="rec-text">Continúa con actividad aeróbica moderada</div></div>`;
+        recHtml+=`<div class="rec-item"><div class="rec-icon">✨</div><div class="rec-text">Excelente condición física, mantén disciplina</div></div>`;
+      }
+
+      const camposMedidas=[
+        ['cuello_cm','Cuello'],['hombro_cm','Hombro'],['pecho_cm','Pecho'],['abdomen_cm','Cintura/Abdomen'],
+        ['brazo_izq_cm','Brazo Izq'],['brazo_der_cm','Brazo Der'],
+        ['antebrazo_izq_cm','Antebrazo Izq'],['antebrazo_der_cm','Antebrazo Der'],
+        ['muslo_izq_cm','Muslo Izq'],['muslo_der_cm','Muslo Der'],
+        ['pantorrilla_izq_cm','Pantorrilla Izq'],['pantorrilla_der_cm','Pantorrilla Der'],
+        ['cadera_cm','Cadera']
+      ];
+      const medidasHtml=camposMedidas.filter(([k])=>ult[k]!=null).map(([k,label])=>`
+        <div class="comp-item"><div class="comp-item-val">${ult[k]}</div><div class="comp-item-label">${label}</div><div class="comp-item-sub">cm</div></div>`).join('');
+
+      detalle=`
+        <h2 class="section-h">Detalle</h2>
+
+        <div class="card">
+          <h2 class="card-title">Medidas antropométricas</h2>
+          <div class="comp-visual">${medidasHtml}</div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Composición corporal</h2>
+          <div class="card-subtitle">Calculado con fórmula US Navy (cuello + abdomen)</div>
+          <div class="comp-visual">
+            <div class="comp-item"><div class="comp-item-val">${peso.toFixed(1)}</div><div class="comp-item-label">Peso total</div><div class="comp-item-sub">kg</div></div>
+            <div class="comp-item"><div class="comp-item-val">${pesoAgua.toFixed(1)}</div><div class="comp-item-label">Agua</div><div class="comp-item-sub">72%</div></div>
+            <div class="comp-item"><div class="comp-item-val">${pesoGrasa.toFixed(1)}</div><div class="comp-item-label">Grasa</div><div class="comp-item-sub">${grasaPct.toFixed(1)}%</div></div>
+            <div class="comp-item"><div class="comp-item-val">${pesoProteina.toFixed(1)}</div><div class="comp-item-label">Proteína</div><div class="comp-item-sub">20%</div></div>
+          </div>
+        </div>
+
+        <div class="card cream">
+          <div class="body-type-label">Clasificación</div>
+          <div class="body-type-val">${tipoNombre}</div>
+          <div class="body-type-desc">${tipoDesc}</div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Gasto calórico estimado</h2>
+          <div class="card-subtitle">Fórmula Mifflin-St Jeor + actividad ligera-moderada</div>
+          <div class="comp-visual" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="comp-item"><div class="comp-item-val" style="font-size:24px;">${tmb.toFixed(0)}</div><div class="comp-item-label">TMB</div><div class="comp-item-sub">kcal/día</div></div>
+            <div class="comp-item"><div class="comp-item-val" style="font-size:24px;">${calMantenimiento.toFixed(0)}</div><div class="comp-item-label">Mantener</div><div class="comp-item-sub">kcal/día</div></div>
+            <div class="comp-item"><div class="comp-item-val acc" style="font-size:24px;">${diffGrasa>0?calDeficit.toFixed(0):calSuperavit.toFixed(0)}</div><div class="comp-item-label">${diffGrasa>0?'Déficit':'Superávit'}</div><div class="comp-item-sub">kcal/día</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Metas personalizadas</h2>
+          <div class="card-subtitle">Para llegar a ${GRASA_META}% de grasa (≈ ${pesoObjetivo.toFixed(1)} kg)</div>
+          <div class="goal-progress">
+            <div class="goal-label"><span>Peso total</span><span>${signed(diffPeso)} kg</span></div>
+            <div class="goal-bar"><div class="goal-fill" style="width:${Math.min(100,Math.abs(diffPeso)*5)}%;"></div></div>
+          </div>
+          <div class="goal-progress" style="margin-bottom:0;">
+            <div class="goal-label"><span>Grasa a perder</span><span>${signed(diffGrasa)} kg</span></div>
+            <div class="goal-bar"><div class="goal-fill negative" style="width:${Math.min(100,Math.abs(diffGrasa)*5)}%;"></div></div>
+          </div>
+          ${semanasParaMeta>0?`<div class="foot" style="margin-top:16px;">⏱️ A un déficit de 500 kcal/día, llegarías a tu meta en aprox. <strong>${semanasParaMeta} semanas</strong></div>`:''}
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Recomendaciones</h2>
+          ${recHtml}
+        </div>`;
+    }else{
+      detalle=`<div class="card"><div class="empty-note">Ingresa peso, cuello y abdomen en MEDIR para ver el análisis de composición corporal</div></div>`;
+    }
+
+    box.innerHTML=ratioHtml+simHtml+cinHtml+misionHtml+detalle;
+  }catch(e){
+    console.error(e);
+    box.innerHTML=`<div class="card"><div class="empty-note">Error al cargar análisis</div></div>`;
+  }
+}
+
+// ---------- Mes ----------
+async function loadHistorialPanel(){
+  await loadCalendar();
+  const d1=document.getElementById('compare-date1'),d2=document.getElementById('compare-date2');
+  if(!d1.value&&!d2.value){
+    d1.value=today.slice(0,8)+'01';
+    d2.value=today;
+    compareNuevoClick();
+  }
+}
+
+async function loadCalendar(){
+  const year=currentMonth.getFullYear(),month=currentMonth.getMonth();
+  document.getElementById('mes-title').textContent=MESES[month].toUpperCase();
+  document.getElementById('eyebrow-mes').textContent='ARCO '+year;
+  const dim=new Date(year,month+1,0).getDate();
+  const start=new Date(year,month,1).getDay();
+  try{
+    const data=await fetchHabitsRange(ymd(new Date(year,month,1)),ymd(new Date(year,month,dim)));
+    let html='',perfect=0;
+    for(let i=0;i<start;i++)html+=`<div class="cal-day blank"></div>`;
+    for(let day=1;day<=dim;day++){
+      const ds=ymd(new Date(year,month,day));
+      const dd=data[ds];
+      const count=dd?((dd.sueño_horas>0?1:0)+(dd.entrenamiento?1:0)+(dd.agua_ml>=META_WATER?1:0)):0;
+      if(count===3)perfect++;
+      const cls=ds>today?'future':'s'+count;
+      html+=`<div class="cal-day ${cls}${ds===today?' today':''}" data-d="${ds}" onclick="selectDay('${ds}')">${day}</div>`;
+    }
     document.getElementById('calendar-grid').innerHTML=html;
+    document.getElementById('perfect-count').textContent=`${perfect} ${perfect===1?'día perfecto':'días perfectos'}`;
   }catch(e){
     console.error(e);
     showToast('Error al cargar calendario');
@@ -1177,6 +1304,8 @@ async function selectDay(dateStr){
     
     document.getElementById('day-detail-content').innerHTML=html;
     document.getElementById('day-detail-card').style.display='block';
+    document.querySelectorAll('.cal-day.sel').forEach(e=>e.classList.remove('sel'));
+    const celda=document.querySelector(`.cal-day[data-d="${dateStr}"]`);if(celda)celda.classList.add('sel');
   }catch(e){
     console.error(e);
   }
@@ -1238,10 +1367,19 @@ async function compareNuevoClick(){
     const f1=parseLocalDate(date1).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
     const f2=parseLocalDate(date2).toLocaleDateString('es-CO',{month:'short',day:'numeric',timeZone:'America/Bogota'});
     
+    const lab=(s)=>{const d=parseLocalDate(s);return d.getDate()+' '+MESES3[d.getMonth()];};
+    const dif=(x,y)=>(x!=null&&y!=null)?y-x:null;
+    const avg=(m)=>(m&&m.brazo_izq_cm!=null&&m.brazo_der_cm!=null)?(m.brazo_izq_cm+m.brazo_der_cm)/2:null;
+    const tile=(label,d,dec,unit)=>`<div class="cmp-tile"><div class="k">${label}</div><div class="v${d!=null&&d>0.00001?' pos':''}">${d==null?'—':signed(d,dec)+unit}</div></div>`;
+    const tiles=tile('Peso',dif(pesoDe(m1),pesoDe(m2)),1,'')
+      +tile('Cintura',dif(m1&&m1.abdomen_cm,m2&&m2.abdomen_cm),1,'')
+      +tile('Brazos',dif(avg(m1),avg(m2)),1,'');
+
     let html=`
-      <div class="card" style="margin-top:16px;">
-        <div class="card-title"><span class="icon">🔄</span> Comparación</div>
-        <table class="comparison-table">
+      <div class="cmp-wrap">
+        <div class="cmp-head"><h3 class="card-title" style="font-size:22px;">Resultado</h3><div class="cmp-range">${lab(date1)} <span class="acc">VS</span> ${lab(date2)}</div></div>
+        <div class="cmp-tiles">${tiles}</div>
+        <div class="table-scroll"><table class="comparison-table">
           <tr>
             <th>Métrica</th>
             <th>${f1}</th>
@@ -1322,7 +1460,7 @@ async function compareNuevoClick(){
       html+=`<tr><td colspan="4" style="font-size:10px;color:var(--text-2);text-align:center;">Solo una fecha tiene medidas</td></tr>`;
     }
     
-    html+=`</table></div>`;
+    html+=`</table></div></div>`;
     
     document.getElementById('comparison-result').innerHTML=html;
     document.getElementById('comparison-result').style.display='block';
